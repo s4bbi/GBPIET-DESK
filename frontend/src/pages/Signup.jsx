@@ -17,21 +17,21 @@ const Signup = () => {
       {/* Left Side: Logo & Illustration */}
       <div className="flex flex-col justify-center items-center p-6 text-white relative">
         <div className="mb-6 flex gap-6 items-center">
-          <img src={collegelogo} alt="GBPIET Logo" className="sm:w-10 lg:w-28 mx-auto mb-2" />
+          <img src={collegelogo} alt="GBPIET Logo" className="w-18 lg:w-28 mx-auto mb-2" />
           <div className="mb-4">
-            <h2 className="text-2xl font-sB">GBPIET</h2>
-            <p className="text-xl font-sL">Pauri-Garhwal, Uttarakhand</p>
+            <h2 className="text-lg lg:text-2xl font-sB">GBPIET</h2>
+            <p className="text-sm lg:text-xl font-sL">Pauri-Garhwal, Uttarakhand</p>
           </div>
         </div>
         <img
           src={ill1}
           alt="Students Illustration"
-          className="w-4/5 max-w-md"
+          className="w-4/5 max-w-md hidden sm:flex"
         />
       </div>
 
       {/* Right Side: Elevated Form */}
-      <div className="flex justify-center items-center bg-transparent px-6 py-10">
+      <div className="flex justify-center items-center bg-transparent px-6 pb-8 sm:py-10">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-12">
           <h2 className="text-2xl text-left mb-8 font-rR font-extralight">Let’s Get Started</h2>
 
