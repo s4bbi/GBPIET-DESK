@@ -5,6 +5,8 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import collegelogo from "../assets/images/collegelogowhiteV.svg";
 import ill1 from "../assets/images/su_ill_1.svg";
 import bg_grid from "../assets/images/bg_grid.svg"
+import { departments, batches } from "../utils/data.js";
+import { HiChevronDown } from "react-icons/hi";
 
 const Signup = () => {
 
@@ -64,14 +66,34 @@ const Signup = () => {
                 {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
               </button>
             </div>
+            {/* Department Dropdown */}
             <div>
               <label className="block text-sm mb-1">Department</label>
-              <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300" />
+              <div className="relative">
+                <select className="w-full appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300">
+                  <option>Select Department</option>
+                  {departments.map((dept, idx) => (
+                    <option key={idx} value={dept}>{dept}</option>
+                  ))}
+                </select>
+                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
+              </div>
             </div>
+
+            {/* Batch Dropdown */}
             <div>
               <label className="block text-sm mb-1">Batch</label>
-              <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300" />
+              <div className="relative">
+                <select className="w-full appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 ">
+                  <option>Select Batch</option>
+                  {batches.map((batch, idx) => (
+                    <option key={idx} value={batch}>{batch}</option>
+                  ))}
+                </select>
+                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
+              </div>
             </div>
+
 
             <button type="submit" className="w-full bg-[#3C89C9] text-white py-2 rounded-md hover:bg-[#15446f] transition font-rR">
               Signup
