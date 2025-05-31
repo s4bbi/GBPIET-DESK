@@ -47,7 +47,7 @@ const Signup = () => {
               <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300" />
             </div>
             <div>
-              <label className="block text-sm mb-1">Email</label>
+              <label htmlFor="email" className="block text-sm mb-1">Email</label>
               <input type="email" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300" />
             </div>
             <div className="relative">
