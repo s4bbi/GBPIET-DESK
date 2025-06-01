@@ -1,0 +1,64 @@
+import React from "react";
+
+export default function OpportunityDetail({ opportunity, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex justify-center items-center">
+      <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg relative">
+        <button
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl"
+          onClick={onClose}
+        >
+          ×
+        </button>
+        <h2 className="text-2xl font-bold mb-2">{opportunity.company}</h2>
+        <div className="mb-1 text-lg font-semibold">{opportunity.role}</div>
+        <div className="mb-2 text-gray-600">{opportunity.details}</div>
+        {opportunity.duration && (
+          <div className="mb-2">
+            <span className="font-semibold">Duration:</span> {opportunity.duration}
+          </div>
+        )}
+        {opportunity.location && (
+          <div className="mb-2">
+            <span className="font-semibold">Location:</span> {opportunity.location}
+          </div>
+        )}
+        {opportunity.eligibility && (
+          <div className="mb-2">
+            <span className="font-semibold">Eligibility:</span> {opportunity.eligibility}
+          </div>
+        )}
+        {opportunity.experience && (
+          <div className="mb-2">
+            <span className="font-semibold">Experience:</span> {opportunity.experience}
+          </div>
+        )}
+        {opportunity.stipend && (
+          <div className="mb-2">
+            <span className="font-semibold">Stipend:</span> {opportunity.stipend}
+          </div>
+        )}
+        {opportunity.qualifications && (
+          <div className="mb-2">
+            <span className="font-semibold">Qualifications:</span> {opportunity.qualifications}
+          </div>
+        )}
+        {opportunity.description && (
+          <div className="mb-4">
+            <span className="font-semibold">Description:</span> {opportunity.description}
+          </div>
+        )}
+        {opportunity.applyLink && (
+          <a
+            href={opportunity.applyLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-gradient-to-b from-[#3C89C9] to-[#235782] text-white px-6 py-2 rounded-md font-semibold"
+          >
+            Apply
+          </a>
+        )}
+      </div>
+    </div>
+  );
+}

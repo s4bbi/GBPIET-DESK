@@ -12,7 +12,6 @@ import {
 export default function Sidebar() {
   const location = useLocation();
 
-  // Define your nav items with their paths
   const navItems = [
     {
       label: "Dashboard",
@@ -37,7 +36,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-gradient-to-b from-[#3C89C9] to-[#235782] text-white flex flex-col justify-between py-8 px-4 min-h-3/4 m-10 rounded-2xl">
+    <aside className="w-64 h-screen bg-gradient-to-b from-[#3C89C9] to-[#235782] text-white flex flex-col justify-between py-8 px-4 rounded-2xl my-10 ml-10">
       <div>
         <div className="flex flex-col items-center mb-10">
           <div className="bg-[#498BC6] w-24 h-24 rounded-full p-4 mb-2 flex justify-center items-center">
