@@ -123,9 +123,9 @@ export default function StudentsTable() {
   return (
     <div className="p-4 sm:p-6">
       {/* Search + Action Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8 mt-4 justify-between flex-wrap">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8 mt-2 justify-between flex-wrap">
         <input
-          className="border px-4 py-2 rounded-full w-full sm:w-72 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm sm:text-base"
+          className=" px-4 py-2 rounded-full w-full sm:w-72 shadow-sm focus:outline-none focus:ring-1 focus:ring-[#235782] text-sm sm:text-base border border-gray-300"
           placeholder="Search"
           value={globalFilter || ""}
           onChange={(e) => setGlobalFilter(e.target.value)}
@@ -149,7 +149,7 @@ export default function StudentsTable() {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items className="absolute right-0 z-10 mt-2 w-44 origin-top-right bg-white  rounded-md shadow-lg focus:outline-none text-sm sm:text-base">
+              <Menu.Items className="absolute right-0 z-10 w-44 origin-top-right bg-white  rounded-md shadow-lg focus:outline-none text-sm sm:text-base">
                 <div className="py-1 text-gray-700">
                   {columns
                     .filter(col => !col.disableSortBy && col.accessor)
@@ -262,7 +262,7 @@ export default function StudentsTable() {
                 {headerGroup.headers.map(column => (
                   <th
                     {...column.getHeaderProps()}
-                    className="px-3 py-2 text-left font-semibold text-gray-700 whitespace-nowrap text-xs sm:text-sm"
+                    className="px-3 py-4 text-left text-gray-700 whitespace-nowrap text-xs sm:text-sm"
                     key={column.id}
                     scope="col"
                   >
