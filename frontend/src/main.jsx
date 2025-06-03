@@ -5,12 +5,14 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
 import App from "./pages/App.jsx";
-import Dashboard from "./pages/Dashboard.jsx";
-import Login from "./pages/Login.jsx";
-import Signup from "./pages/Signup.jsx";
-import JobsPage from "./pages/JobsPage.jsx";
-import InternshipsPage from "./pages/InternshipsPage.jsx";
-import TrainingsPage from "./pages/TrainingsPage.jsx";
+import Login from "./pages/auth/Login.jsx";
+import Signup from "./pages/auth/Signup.jsx";
+import JobsPage from "./pages/student/JobsPage.jsx";
+import InternshipsPage from "./pages/student/InternshipsPage.jsx";
+import TrainingsPage from "./pages/student/TrainingsPage.jsx";
+import StudentDashboard from "./pages/student/StudentDashboard.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import StudentsData from "./pages/admin/StudentsData.jsx";
 
 // Optional: Create a fallback or 404 page later if needed
 const router = createBrowserRouter([
@@ -21,10 +23,12 @@ const router = createBrowserRouter([
       { path: "/", element: <Signup /> },
       { path: "/login", element: <Login /> },
       { path: "/signup", element: <Signup /> },
-      { path: "/dashboard", element: <Dashboard /> },
+      { path: "/dashboard", element: <StudentDashboard /> },
       { path: "/jobs", element: <JobsPage /> },
       { path: "/internships", element: <InternshipsPage /> },
       { path: "/trainings", element: <TrainingsPage /> },
+      { path: "/admin/dashboard", element: <AdminDashboard /> },
+      { path: "/admin/students", element: <StudentsData /> },
 
     ],
   },

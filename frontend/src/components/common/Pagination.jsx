@@ -4,7 +4,7 @@ export default function Pagination({ current = 1, total = 10, onPageChange }) {
   return (
     <div className="flex items-center justify-center gap-4 flex-wrap">
       <button
-        className="px-3 py-1 rounded bg-gray-200 text-gray-500"
+        className="px-3 py-1 rounded bg-gray-200 text-gray-500 cursor-pointer"
         onClick={() => onPageChange(current - 1)}
         disabled={current === 1}
       >
@@ -12,7 +12,7 @@ export default function Pagination({ current = 1, total = 10, onPageChange }) {
       </button>
       <button className="px-3 py-1 rounded bg-[#3C89C9] text-white">{current}</button>
       <button
-        className="px-3 py-1 rounded bg-gray-200 text-gray-500"
+        className="px-3 py-1 rounded bg-gray-200 text-gray-500 cursor-pointer"
         onClick={() => onPageChange(current + 1)}
         disabled={current === total}
       >

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
-import Pagination from "./Pagination";
+import Pagination from "../common/Pagination";
 
 const trainings = [
   { company: "Scaler", role: "DSA Training", details: "Online • 8 weeks", deadline: "7th June" },

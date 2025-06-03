@@ -6,32 +6,38 @@ import {
   HiOutlineAcademicCap,
   HiOutlineClipboardList,
   HiOutlineTemplate,
-  HiOutlineIdentification
+  HiOutlineIdentification,
+  HiOutlineUserGroup
 } from "react-icons/hi";
 
-export default function Sidebar() {
+export default function AdminSidebar() {
   const location = useLocation();
 
   const navItems = [
     {
       label: "Dashboard",
       icon: <HiOutlineTemplate size={22} />,
-      to: "/dashboard"
+      to: "/admin/dashboard"
     },
     {
-      label: "Jobs",
+      label: "Students Data",
+      icon: <HiOutlineUserGroup size={22} />,
+      to: "/admin/students"
+    },
+    {
+      label: "Post Jobs",
       icon: <HiOutlineBriefcase size={22} />,
-      to: "/jobs"
+      to: "/admin/jobs"
     },
     {
-      label: "Internships",
-      icon: <HiOutlineClipboardList size={22} />,
-      to: "/internships"
-    },
-    {
-      label: "Trainings",
+      label: "Post Trainings",
       icon: <HiOutlineIdentification size={22} />,
-      to: "/trainings"
+      to: "/admin/trainings"
+    },
+    {
+      label: "Post Internships",
+      icon: <HiOutlineClipboardList size={22} />,
+      to: "/admin/internships"
     }
   ];
 
@@ -40,17 +46,18 @@ export default function Sidebar() {
       <div>
         <div className="flex flex-col items-center mb-10">
           <div className="bg-[#498BC6] w-24 h-24 rounded-full p-4 mb-2 flex justify-center items-center">
-            <HiOutlineAcademicCap size={48} className='flex items-center' />
+            <HiOutlineAcademicCap size={48} />
           </div>
+          <h2 className="text-lg mt-2 font-sM">Admin Panel</h2>
         </div>
-        <nav className="flex flex-col gap-2 text-center font-sM">
+        <nav className="flex flex-col gap-2 font-sM">
           {navItems.map(({ label, icon, to }) => {
             const isActive = location.pathname === to;
             return (
               <Link
                 key={label}
                 to={to}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition 
                   ${isActive
                     ? 'bg-white text-[#235782] font-bold'
                     : 'text-gray-200 hover:bg-[#498BC6] hover:text-white'
@@ -63,6 +70,7 @@ export default function Sidebar() {
           })}
         </nav>
       </div>
+
       <button className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#5f8db4] transition font-sB">
         <HiOutlineLogout size={22} />
         Logout

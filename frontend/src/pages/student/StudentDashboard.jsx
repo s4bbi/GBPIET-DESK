@@ -1,36 +1,13 @@
 // src/pages/Dashboard.jsx
 import React from 'react';
-import Layout from '../components/Layout';
-import WelcomeCard from '../components/WelcomeCard';
-import JobCard from '../components/JobCard';
-import ProfileActions from '../components/ProfileActions';
-import ProfileCompletion from '../components/ProfileCompletion';
+import Layout from '../../components/layouts/StudentLayout';
+import WelcomeCard from '../../components/student/WelcomeCard';
+import JobCard from '../../components/student/JobCard';
+import ProfileActions from '../../components/student/ProfileActions';
+import ProfileCompletion from '../../components/student/ProfileCompletion';
+import {jobs} from "../../utils/jobs.js"
 
-const jobs = [
-  {
-    company: "Microsoft",
-    role: "Data Analyst",
-    type: "On Site",
-    duration: "6 months",
-    deadline: "27th May",
-  },
-  {
-    company: "CosmicAI",
-    role: "ML Engineer",
-    type: "Remote",
-    duration: "4 months",
-    deadline: "29th May",
-  },
-  {
-    company: "TCS",
-    role: "System Designer",
-    type: "Remote",
-    duration: "1 month",
-    deadline: "1st June",
-  },
-];
-
-export default function Dashboard() {
+export default function StudentDashboard() {
   return (
     <Layout active="Dashboard">
       <WelcomeCard name="Yashpreet Singh" branch="CSE" batch="2022-2026" />

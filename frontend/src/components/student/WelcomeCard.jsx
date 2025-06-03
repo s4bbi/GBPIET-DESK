@@ -1,5 +1,5 @@
 import React from 'react'
-import ill2 from "../assets/images/db_ill2.svg"
+import ill2 from "../../assets/images/db_ill2.svg"
 
 function WelcomeCard({ name, branch, batch }) {
 

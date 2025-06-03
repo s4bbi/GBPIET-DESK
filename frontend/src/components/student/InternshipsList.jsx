@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
-import Pagination from "./Pagination";
+import Pagination from "../common/Pagination";
 
 const internships = [
   { company: "Microsoft", role: "Software Intern", details: "Remote • 2 months", deadline: "5th June" },

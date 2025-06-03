@@ -1,6 +1,6 @@
 import React from "react";
-import Layout from "../components/Layout";
-import InternshipsList from "../components/InternshipsList";
+import Layout from "../../components/layouts/StudentLayout";
+import InternshipsList from "../../components/student/InternshipsList";
 
 export default function InternshipsPage() {
   return (

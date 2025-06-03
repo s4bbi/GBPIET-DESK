@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
-import Pagination from "./Pagination"; // Import your custom pagination component
+import Pagination from "../common/Pagination"; // Import your custom pagination component
 
 const jobs = [
   { company: "Microsoft", role: "Data Analyst", details: "On Site • Full Time", deadline: "27th May" },

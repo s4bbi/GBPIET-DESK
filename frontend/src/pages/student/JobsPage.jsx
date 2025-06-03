@@ -1,8 +1,8 @@
 // src/pages/JobsPage.jsx
 import React from "react";
-import Layout from "../components/Layout";
-import JobsList from "../components/JobsList";
-import Pagination from "../components/Pagination";
+import Layout from "../../components/layouts/StudentLayout";
+import JobsList from "../../components/student/JobsList";
+import Pagination from "../../components/common/Pagination";
 
 export default function JobsPage() {
   return (

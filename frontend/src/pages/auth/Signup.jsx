@@ -1,11 +1,10 @@
 import React, {useState} from "react";
-import "../index.css"
 import { Link } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import collegelogo from "../assets/images/collegelogowhiteV.svg";
-import ill1 from "../assets/images/su_ill_1.svg";
-import bg_grid from "../assets/images/bg_grid.svg"
-import { departments, batches } from "../utils/data.js";
+import collegelogo from "../../assets/images/collegelogowhiteV.svg";
+import ill1 from "../../assets/images/su_ill_1.svg";
+import bg_grid from "../../assets/images/bg_grid.svg"
+import { departments, batches } from "../../utils/data.js";
 import { HiChevronDown } from "react-icons/hi";
 
 const Signup = () => {
