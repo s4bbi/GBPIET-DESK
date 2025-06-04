@@ -125,7 +125,7 @@ export default function StudentsTable() {
       {/* Search + Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8 mt-2 justify-between flex-wrap">
         <input
-          className=" px-4 py-2 rounded-full w-full sm:w-72 shadow-sm focus:outline-none focus:ring-1 focus:ring-[#235782] text-sm sm:text-base border border-gray-300"
+          className="px-4 py-2 rounded-full w-full sm:w-72 shadow-sm focus:outline-none focus:ring-1 focus:ring-[#235782] text-sm sm:text-base border border-gray-300"
           placeholder="Search"
           value={globalFilter || ""}
           onChange={(e) => setGlobalFilter(e.target.value)}
