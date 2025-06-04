@@ -1,20 +1,17 @@
-// src/components/Layout.jsx
+// src/components/layouts/AdminLayout.jsx
 import React from "react";
+import AdminSidebar from "../admin/AdminSidebar"; // ✅ Ensure it's ADMIN sidebar
 import Header from "../common/Header";
-import AdminSidebar from "../admin/AdminSidebar";
 
-export default function Layout({ children, active }) {
+export default function AdminLayout({ active, children }) {
   return (
-    <div className="flex bg-[#F5F5F5] min-h-screen">
-      {/* Sidebar */}
-      <div className="hidden md:block">
-        <AdminSidebar active={active} />
-      </div>
-
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col">
+    <div className="flex h-screen bg-gray-100">
+      <AdminSidebar active={active} />
+      <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 px-4 pb-6 sm:px-6 md:px-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -14,6 +14,8 @@ import StudentDashboard from "./pages/student/StudentDashboard.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import StudentsData from "./pages/admin/StudentsData.jsx";
 import PostJobs from "./pages/admin/PostJobs.jsx";
+import PostInternships from "./pages/admin/PostInternships.jsx";
+import PostTrainings from "./pages/admin/PostTrainings.jsx";
 
 // Optional: Create a fallback or 404 page later if needed
 const router = createBrowserRouter([
@@ -31,6 +33,8 @@ const router = createBrowserRouter([
       { path: "/admin/dashboard", element: <AdminDashboard /> },
       { path: "/admin/students", element: <StudentsData /> },
       { path: "/admin/jobs", element: <PostJobs /> },
+      { path: "/admin/internships", element: <PostInternships /> },
+      { path: "/admin/trainings", element: <PostTrainings /> },
 
     ],
   },

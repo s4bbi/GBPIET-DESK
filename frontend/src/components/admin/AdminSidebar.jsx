@@ -30,15 +30,15 @@ export default function AdminSidebar() {
       to: "/admin/jobs"
     },
     {
+      label: "Post Internships",
+      icon: <HiOutlineClipboardList size={22} />,
+      to: "/admin/internships"
+    },
+    {
       label: "Post Trainings",
       icon: <HiOutlineIdentification size={22} />,
       to: "/admin/trainings"
     },
-    {
-      label: "Post Internships",
-      icon: <HiOutlineClipboardList size={22} />,
-      to: "/admin/internships"
-    }
   ];
 
   return (

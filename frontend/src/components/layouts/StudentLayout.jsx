@@ -3,7 +3,7 @@ import React from "react";
 import Header from "../common/Header";
 import StudentSidebar from "../student/StudentSidebar";
 
-export default function Layout({ children, active }) {
+export default function StudentLayout({ children, active }) {
   return (
     <div className="flex bg-[#F5F5F5] min-h-screen">
       {/* Sidebar */}
