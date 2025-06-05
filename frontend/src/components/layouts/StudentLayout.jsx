@@ -1,6 +1,6 @@
 // src/components/Layout.jsx
 import React from "react";
-import StudentHeader from "../student/StudentHeader";
+import StudentHeader from "../common/Header";
 import StudentSidebar from "../student/StudentSidebar";
 
 export default function StudentLayout({ children, active }) {
