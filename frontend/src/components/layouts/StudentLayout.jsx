@@ -1,19 +1,19 @@
 // src/components/Layout.jsx
 import React from "react";
-import Header from "../common/Header";
+import StudentHeader from "../student/StudentHeader";
 import StudentSidebar from "../student/StudentSidebar";
 
 export default function StudentLayout({ children, active }) {
   return (
-    <div className="flex bg-[#F5F5F5] min-h-screen">
+    <div className="flex bg-[#F5F5F5] h-screen">
       {/* Sidebar */}
-      <div className="hidden md:block">
+      <div className="hidden md:flex">
         <StudentSidebar active={active} />
       </div>
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col">
-        <Header />
+        <StudentHeader />
         <main className="flex-1 p-4 sm:p-6 md:p-8">{children}</main>
       </div>
     </div>

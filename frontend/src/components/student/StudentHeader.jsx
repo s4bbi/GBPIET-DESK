@@ -34,7 +34,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="flex items-center justify-between gap-10 sm:gap-0 m-6 sm:m-10 relative z-10">
+      <header className="flex items-center justify-between gap-10 sm:gap-0 m-6 sm:m-8 ">
         {/* Hamburger Menu - Mobile Only */}
         <button 
           onClick={() => setSidebarOpen(true)} 
@@ -44,15 +44,15 @@ export default function Header() {
           <HiOutlineMenu size={26} />
         </button>
 
-        {/* Search Bar */}
+        {/* Search Bar
         <input
           type="text"
           placeholder="Search"
           className="w-full sm:w-1/3 px-4 py-2 rounded-full border border-gray-300 shadow-sm focus:outline-none text-sm sm:text-base"
-        />
+        /> */}
 
         {/* Profile */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-end gap-2">
           <HiOutlineUserCircle size={28} className="text-gray-700" />
           <span className="font-sM text-gray-700 text-sm sm:text-base hidden sm:flex">Yashpreet Singh</span>
         </div>
