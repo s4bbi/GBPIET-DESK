@@ -1,109 +1,91 @@
 const { HiringRepository } = require("../repositories");
-
+const { StatusCodes } = require("http-status-codes");
+const BadRequestError = require("../errors/badRequest");
+const NotFoundError = require("../errors/notFound");
 const hiringRepository = new HiringRepository();
+
+// Shared helper for mongoose ValidationError
+function handleValidationError(error) {
+  if (error.name === "ValidationError") {
+    const errors = Object.keys(error.errors).map((field) => ({
+      field,
+      message: error.errors[field].message,
+    }));
+    throw new BadRequestError(
+      "Validation failed for the provided data. Please correct the errors and try again.",
+      errors
+    );
+  }
+  throw error;
+}
 
 async function createHiring(hiringData) {
   try {
-    const hiring = await hiringRepository.create(hiringData);
-    return hiring;
+    return await hiringRepository.create(hiringData);
   } catch (error) {
-    if (error.name === "ValidationError") {
-      // error.errors is an object where each key is the name of an invalid field.
-      const errors = Object.keys(error.errors).map((field) => ({
-        field, // Field name (e.g., "password")
-        message: error.errors[field].message, // Error message (e.g., "Path password (1234) is shorter than the minimum allowed length (8).")
-      }));
-      throw new BadRequestError(
-        "Validation failed for the provided data. Please correct the errors and try again.",
-        errors
-      );
-    }
-    throw error;
+    handleValidationError(error);
   }
 }
+
 async function getHiringByDepartment(department) {
   try {
-    const hiring = await hiringRepository.findByDepartment(department);
-    return hiring;
+    return await hiringRepository.findByDepartment(department);
   } catch (error) {
-    console.log(error);
+    // You might want to throw a NotFoundError if no posts exist for a department
     throw error;
   }
 }
+
 async function deleteExpiredHiringPosts() {
   try {
-    const expiredPosts = await hiringRepository.deleteExpiredPost();
-    return expiredPosts;
+    return await hiringRepository.deleteExpiredPost();
   } catch (error) {
-    console.log(error);
     throw error;
   }
 }
+
 async function deletePosts(id) {
   try {
-    const deletedPost = await hiringRepository.destroy(id);
-    return deletedPost;
+    const deleted = await hiringRepository.destroy(id);
+    if (!deleted) {
+      throw new NotFoundError("Hiring post", id);
+    }
+    return deleted;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 }
+
 async function getAllHiring(query) {
   try {
-    const sortFilter = {};
-    const customFilter = {};
-    // const page =
-    //   query.page && parseInt(query.page, 10) > 0 ? parseInt(query.page, 10) : 1;
-    // const limit =
-    //   query.limit && parseInt(query.limit, 10) > 0
-    //     ? parseInt(query.limit, 10)
-    //     : 10;
-
-    // const skip = (page - 1) * limit;
-
-    // Location filter
+    // Build filter
+    const filter = {};
     if (query.location) {
-      customFilter.location = { $regex: query.location, $options: "i" };
+      filter.location = { $regex: query.location, $options: "i" };
     }
-
-    // Company name filter
     if (query.companyName) {
-      customFilter.companyName = {
-        $regex: query.companyName,
-        $options: "i",
-      };
+      filter.companyName = { $regex: query.companyName, $options: "i" };
     }
-
-    // Department filter
     if (query.departments) {
-      customFilter.departments = { $in: [query.departments] };
+      filter.departments = { $in: [query.departments] };
     }
 
-    // Sorting (e.g., sort=companyName_asc,lastDate_desc)
+    // Build sort
+    const sort = {};
     if (query.sort) {
       query.sort.split(",").forEach((param) => {
         const [field, dir] = param.split("_");
-        sortFilter[field] = dir === "desc" ? -1 : 1;
+        sort[field] = dir === "desc" ? -1 : 1;
       });
     }
 
-    // Debug logs
-    console.log("Query:", query);
-    console.log("Custom Filter:", customFilter);
-    console.log("🟩 SERVICE LOG:");
-    console.log("Query Received:", query);
-    console.log("Custom Filter to Repo:", customFilter);
-    console.log("Sort Filter:", sortFilter);
-    // console.log("Pagination - Page:", page, "Limit:", limit, "Skip:", skip);
+    // Pagination defaults
+    const page  = query.page && parseInt(query.page, 10) > 0 ? parseInt(query.page, 10) : 1;
+    const limit = query.limit && parseInt(query.limit, 10) > 0 ? parseInt(query.limit, 10) : 10;
+    const skip  = (page - 1) * limit;
 
-    const hiring = await hiringRepository.getAllHiring(
-      customFilter,
-      sortFilter
-    );
-
-    return hiring;
+    return await hiringRepository.getAllHiring(filter, sort, skip, limit);
   } catch (error) {
-    console.log(error);
     throw error;
   }
 }
@@ -112,6 +94,6 @@ module.exports = {
   createHiring,
   getHiringByDepartment,
   deleteExpiredHiringPosts,
-  getAllHiring,
   deletePosts,
+  getAllHiring,
 };

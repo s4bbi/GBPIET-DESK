@@ -9,13 +9,14 @@ async function createAdmin(req, res, next) {
     });
     return res.status(StatusCodes.CREATED).json({
       success: true,
-      message: "Admin Created Successfully",
+      message: "Admin created successfully",
       data: admin,
     });
   } catch (error) {
     next(error);
   }
 }
+
 async function signIn(req, res, next) {
   try {
     const { user, token } = await AdminService.signIn({
@@ -25,8 +26,8 @@ async function signIn(req, res, next) {
 
     return res.status(StatusCodes.OK).json({
       success: true,
-      message: "User signed in successfully",
-      token, // Send token in response body
+      message: "Admin signed in successfully",
+      token,
       data: {
         id: user.id,
         role: user.role,
@@ -36,19 +37,21 @@ async function signIn(req, res, next) {
     next(error);
   }
 }
+
 async function deleteAdmin(req, res, next) {
   try {
     const { id } = req.params;
     const response = await AdminService.deleteAdmin(id);
     return res.status(StatusCodes.OK).json({
       success: true,
-      message: "admin Deleted Successfully",
+      message: "Admin deleted successfully",
       data: response,
     });
   } catch (error) {
     next(error);
   }
 }
+
 module.exports = {
   createAdmin,
   signIn,

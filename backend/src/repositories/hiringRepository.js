@@ -3,7 +3,7 @@ const CrudRepository = require("./crudRepository");
 
 class HiringRepository extends CrudRepository {
   constructor() {
-    super(Hiring);
+    super(Hiring, "Hiring");
   }
 
   async findByDepartment(department) {
@@ -13,10 +13,10 @@ class HiringRepository extends CrudRepository {
       }).sort({ lastDate: 1 });
       return hiring;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
+
   async deleteExpiredPost() {
     try {
       const currentDate = new Date();
@@ -25,18 +25,21 @@ class HiringRepository extends CrudRepository {
       });
       return expiredPosts;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
-  async getAllHiring(filter = {}, sort = {}) {
-    console.log("🟨 REPOSITORY LOG:");
-    console.log("Final DB Query Filter:", filter);
-    // console.log("Sort:", sort, "Skip:", skip, "Limit:", limit);
-    const response = await Hiring.find(filter).sort(sort);
 
-    console.log("MongoDB Returned Records:", response.length);
-    return response;
+  async getAllHiring(filter = {}, sort = {}, skip = 0, limit = 10) {
+    try {
+      const response = await Hiring.find(filter)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit);
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

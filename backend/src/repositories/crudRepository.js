@@ -1,62 +1,45 @@
 const NotFoundError = require("../errors/notFound");
 
 class CrudRepository {
-  constructor(model) {
+  constructor(model, modelName = "Record") {
     this.model = model;
+    this.modelName = modelName;
   }
+
   async create(data) {
-    try {
-      const response = await this.model.create(data);
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return await this.model.create(data);
   }
+
   async destroy(id) {
-    try {
-      const response = await this.model.findByIdAndDelete(id);
-      if (!response) {
-        throw new NotFoundError("Rafting", id);
-      }
-      return response;
-    } catch (error) {
-      throw error;
+    const response = await this.model.findByIdAndDelete(id);
+    if (!response) {
+      throw new NotFoundError(this.modelName, id);
     }
+    return response;
   }
+
   async get(id) {
-    try {
-      const response = await this.model.findById(id);
-      if (!response) {
-        throw new NotFoundError("Rafting", id);
-      }
-      return response;
-    } catch (error) {
-      throw error;
+    const response = await this.model.findById(id);
+    if (!response) {
+      throw new NotFoundError(this.modelName, id);
     }
+    return response;
   }
+
   async getAll() {
-    try {
-      const response = await this.model.find();
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    return await this.model.find();
   }
+
   async update(id, data) {
-    try {
-      const response = await this.model.findByIdAndUpdate(id, data, {
-        new: true,
-        runValidators: true, // ✅ ensures schema validations apply
-      });
-
-      if (!response) {
-        throw new NotFoundError("Rafting", id);
-      }
-
-      return response;
-    } catch (error) {
-      throw error;
+    const response = await this.model.findByIdAndUpdate(id, data, {
+      new: true,
+      runValidators: true,
+    });
+    if (!response) {
+      throw new NotFoundError(this.modelName, id);
     }
+    return response;
   }
 }
+
 module.exports = CrudRepository;

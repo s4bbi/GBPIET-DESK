@@ -6,7 +6,7 @@ class BaseError extends Error {
     this.statusCode = statusCode;
     this.details = details;
 
-    // Maintain proper stack trace (only in V8 environments like Node.js)
+    // Maintain proper stack trace (only available in V8 engines like Node.js)
     Error.captureStackTrace(this, this.constructor);
   }
 }

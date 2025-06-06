@@ -4,6 +4,21 @@ const { StudentRepository } = require("../repositories");
 const Auth = require("../utils/common/Auth");
 const studentRepository = new StudentRepository();
 
+// DRY helper for validation error handling
+function handleValidationError(error) {
+  if (error.name === "ValidationError") {
+    const errors = Object.keys(error.errors).map((field) => ({
+      field,
+      message: error.errors[field].message,
+    }));
+    throw new BadRequestError(
+      "Validation failed for the provided data. Please correct the errors and try again.",
+      errors
+    );
+  }
+  throw error;
+}
+
 async function createStudent(data) {
   try {
     const existingStudent = await studentRepository.getUserByEmail(data.email);
@@ -14,26 +29,17 @@ async function createStudent(data) {
     }
     const student = await studentRepository.create(data);
     const token = Auth.generateToken({ role: "student", id: student._id });
-    console.log(token);
+    // Use proper logging or remove for production
+    console.log("Generated token for new student:", token);
     return { student, token };
-    // return student;
   } catch (error) {
-    if (error.name === "ValidationError") {
-      const errors = Object.keys(error.errors).map((field) => ({
-        field,
-        message: error.errors[field].message,
-      }));
-      throw new BadRequestError(
-        "Validation failed for the provided data. Please correct the errors and try again.",
-        errors
-      );
-    }
-
-    console.error("Error creating camping site:", error);
+    handleValidationError(error);
+    console.error("Error creating student:", error);
     throw error;
   }
 }
-async function StudentLogin(data) {
+
+async function studentLogin(data) {
   try {
     const user = await studentRepository.getUserByEmail(data.email);
     if (!user) {
@@ -45,7 +51,7 @@ async function StudentLogin(data) {
     if (!passwordMatch) {
       throw new UnauthorizedError(
         "Invalid credentials",
-        `the password you entered for ${data.email} is incorrect. Please try again..`
+        `The password you entered for ${data.email} is incorrect. Please try again.`
       );
     }
     const token = Auth.generateToken({
@@ -53,24 +59,15 @@ async function StudentLogin(data) {
       id: user._id,
       department: user.department,
     });
-    console.log(token);
+    console.log("Generated token for login:", token);
     return { user, token };
   } catch (error) {
-    if (error.name === "ValidationError") {
-      // error.errors is an object where each key is the name of an invalid field.
-      const errors = Object.keys(error.errors).map((field) => ({
-        field, // Field name (e.g., "password")
-        message: error.errors[field].message, // Error message (e.g., "Path password (1234) is shorter than the minimum allowed length (8).")
-      }));
-      throw new BadRequestError(
-        "Validation failed for the provided data. Please correct the errors and try again.",
-        errors
-      );
-    }
+    handleValidationError(error);
     throw error;
   }
 }
+
 module.exports = {
   createStudent,
-  StudentLogin,
+  studentLogin,
 };

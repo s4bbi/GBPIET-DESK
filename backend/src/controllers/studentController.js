@@ -12,14 +12,14 @@ async function createUser(req, res, next) {
     });
     return res.status(StatusCodes.CREATED).json({
       success: true,
-      message: "User created successfully",
-      error: {},
+      message: "Student registered successfully",
       data: user,
     });
   } catch (error) {
     next(error);
   }
 }
+
 async function loginStudent(req, res, next) {
   try {
     const { user, token } = await StudentService.StudentLogin({
@@ -28,18 +28,19 @@ async function loginStudent(req, res, next) {
     });
     return res.status(StatusCodes.OK).json({
       success: true,
-      message: "User logged in successfully",
+      message: "Student logged in successfully",
       token,
       data: {
         id: user.id,
         role: "student",
-        department: user.department, // or add role if needed dynamically
+        department: user.department,
       },
     });
   } catch (error) {
     next(error);
   }
 }
+
 module.exports = {
   createUser,
   loginStudent,

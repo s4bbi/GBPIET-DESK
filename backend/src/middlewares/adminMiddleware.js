@@ -1,3 +1,4 @@
+// validationMiddleware.js
 const BadRequestError = require("../errors/badRequest");
 
 function validateUser(requiredFields) {
@@ -8,10 +9,11 @@ function validateUser(requiredFields) {
         field,
         message: `${field} field is required`,
       }));
-      throw new BadRequestError(
+      const err = new BadRequestError(
         "Validation failed. Please provide all required fields.",
         details
       );
+      return next(err);
     }
     next();
   };
