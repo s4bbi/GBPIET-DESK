@@ -5,7 +5,7 @@ async function createHiring(req, res, next) {
   try {
     const post = await HiringService.createHiring({
       ...req.body,
-      createdBy: req.user?.id, // track who created the post
+      createdBy: req.user?.id,
     });
     return res.status(StatusCodes.CREATED).json({
       success: true,

@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 
 const info = (req, res, next) => {
+  console.log("Inside infoController");
   try {
     return res.status(StatusCodes.OK).json({
       success: true,

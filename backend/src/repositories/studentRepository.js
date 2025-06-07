@@ -1,4 +1,4 @@
-const Student = require("../models/userModel");
+const Student = require("../models/studentModel");
 const CrudRepository = require("./crudRepository");
 
 class StudentRepository extends CrudRepository {

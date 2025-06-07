@@ -7,7 +7,7 @@ const { AuthMiddleware } = require("../../middlewares");
 router.post(
   "/",
   AuthMiddleware.isLoggedIn,
-  AuthMiddleware.requireadmin,
+  AuthMiddleware.requireAdmin,
   HiringController.createHiring
 );
 router.get(
@@ -18,7 +18,7 @@ router.get(
 router.delete(
   "/:id",
   AuthMiddleware.isLoggedIn,
-  AuthMiddleware.requireadmin,
+  AuthMiddleware.requireAdmin,
   HiringController.deletePost
 );
 
