@@ -1,45 +1,26 @@
-const { StatusCodes } = require("http-status-codes");
-const { StudentService } = require("../services");
+// src/controllers/studentController.js
+const {StudentService}=require('../services')
+// const studentService = require("../services/studentService");
 
-async function createUser(req, res, next) {
+const createUser = async (req, res, next) => {
   try {
-    const user = await StudentService.createStudent({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      department: req.body.department,
-      year: req.body.year,
-    });
-    return res.status(StatusCodes.CREATED).json({
-      success: true,
-      message: "Student registered successfully",
-      data: user,
-    });
-  } catch (error) {
-    next(error);
+    const result = await StudentService.signup(req.body);
+    res.status(201).json(result);
+  } catch (err) {
+    console.error("Signup error:", err);  // Log full error for debugging
+    next(err);
   }
-}
+};
 
-async function loginStudent(req, res, next) {
+const loginStudent = async (req, res, next) => {
   try {
-    const { user, token } = await StudentService.StudentLogin({
-      email: req.body.email,
-      password: req.body.password,
-    });
-    return res.status(StatusCodes.OK).json({
-      success: true,
-      message: "Student logged in successfully",
-      token,
-      data: {
-        id: user.id,
-        role: "student",
-        department: user.department,
-      },
-    });
-  } catch (error) {
-    next(error);
+    const result = await StudentService.login(req.body);
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
   }
-}
+};
+
 
 module.exports = {
   createUser,

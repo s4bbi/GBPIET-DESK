@@ -8,8 +8,23 @@ const connectToDB = require("./config/dbConfig");
 const runExpiredPostCleanup = require("./utils/cronJob");
 const app = express();
 const server = http.createServer(app);
-app.use(bodyParser.urlencoded({ extended: true }));
 
+const cors = require("cors");
+
+const allowedOrigins = ["http://localhost:5173"]; // Change to your frontend URL
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `CORS policy does not allow access from origin: ${origin}`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
+
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 
@@ -23,10 +38,7 @@ app.use(errorHandler);
 async function startServer() {
   try {
     await connectToDB();
-    // console.log("✅ Connected to MongoDB");
     runExpiredPostCleanup();
-    // await checkRedisConnection(); // Check Redis connection
-
     server.listen(ServerConfig.PORT, () => {
       console.log(`🚀 Server listening on port ${ServerConfig.PORT}`);
     });

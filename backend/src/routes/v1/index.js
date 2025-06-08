@@ -7,7 +7,7 @@ const hiringRoutes = require("./hiring.routes");
 const { InfoController } = require("../../controllers");
 
 router.get("/info", InfoController.info);
-router.use("/student", studentRoutes);
+router.use("/students", studentRoutes);
 router.use("/admin", adminRoutes);
 router.use("/hiring", hiringRoutes);
 

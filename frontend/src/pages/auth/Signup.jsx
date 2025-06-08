@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { HiChevronDown } from "react-icons/hi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import collegelogo from "../../assets/images/collegelogowhiteV.svg";
 import ill1 from "../../assets/images/su_ill_1.svg";
 import bg_grid from "../../assets/images/bg_grid.svg";
 import { departments, batches } from "../../utils/data.js";
-import { HiChevronDown } from "react-icons/hi";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -18,22 +21,32 @@ const Signup = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    const { name, value } = e.target;
+
+    if (name === "password") {
+      if (!passwordRegex.test(value)) {
+        setPasswordError(
+          "Password must be at least 8 characters and include uppercase, lowercase, number & special character."
+        );
+      } else {
+        setPasswordError("");
+      }
+    }
+
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
 
-    // Basic frontend validation (optional, backend will also validate)
     if (
       !formData.name ||
       !formData.instituteId ||
@@ -42,12 +55,17 @@ const Signup = () => {
       !formData.department ||
       !formData.batch
     ) {
-      setError("Please fill all fields.");
+      toast.error("Please fill all fields.");
+      return;
+    }
+
+    if (passwordError) {
+      toast.error("Please fix the password before submitting.");
       return;
     }
 
     try {
-      const res = await fetch("/api/v1/students/signup", {
+      const res = await fetch("http://localhost:3001/api/v1/students/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -56,9 +74,12 @@ const Signup = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "Failed to signup");
-      } else {
-        setSuccess("Signup successful! Please login.");
+      console.error("Signup error:", data);
+      const errorMessage =
+        data?.error?.message || data?.message || "Failed to signup";
+      toast.error(errorMessage);
+    } else {
+        toast.success("Signup successful! Please login.");
         setFormData({
           name: "",
           instituteId: "",
@@ -69,13 +90,14 @@ const Signup = () => {
         });
       }
     } catch (err) {
-      setError("Something went wrong, please try again.");
+      console.error("Signup fetch error:", err);
+      toast.error("Something went wrong, please try again.");
     }
   };
 
   return (
     <div
-      className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-[#235782]"
+      className="min-h-screen w-full flex flex-col md:flex-row"
       style={{
         backgroundImage: `url(${bg_grid})`,
         backgroundRepeat: "no-repeat",
@@ -83,27 +105,26 @@ const Signup = () => {
         backgroundSize: "cover",
       }}
     >
-      {/* Left Side: Logo & Illustration */}
-      <div className="flex flex-col justify-center items-center p-6 text-white relative">
-        <div className="mb-6 flex gap-6 items-center">
-          <img src={collegelogo} alt="GBPIET Logo" className="w-18 lg:w-28 mx-auto mb-2" />
-          <div className="mb-4">
-            <h2 className="text-lg lg:text-2xl font-sB">GBPIET</h2>
-            <p className="text-sm lg:text-xl font-sL">Pauri-Garhwal, Uttarakhand</p>
+      <ToastContainer />
+
+      {/* Left Side */}
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-[#235782] text-white p-6">
+        <div className="mb-6 flex gap-4 items-center">
+          <img src={collegelogo} alt="GBPIET Logo" className="w-20 lg:w-28" />
+          <div>
+            <h2 className="text-xl lg:text-2xl font-sB">GBPIET</h2>
+            <p className="text-sm lg:text-lg font-sL">Pauri-Garhwal, Uttarakhand</p>
           </div>
         </div>
-        <img src={ill1} alt="Students Illustration" className="w-4/5 max-w-md hidden sm:flex" />
+        <img src={ill1} alt="Students Illustration" className="w-4/5 max-w-md hidden lg:flex" />
       </div>
 
-      {/* Right Side: Elevated Form */}
-      <div className="flex justify-center items-center bg-transparent px-6 pb-8 sm:py-10">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-12">
+      {/* Right Side */}
+      <div className="w-full md:w-1/2 flex justify-center items-center bg-[#235782]">
+        <div className="w-full max-w-md rounded-2xl shadow-2xl p-10 z-10 bg-white m-6">
           <h2 className="text-2xl text-left mb-8 font-rR font-extralight">Let’s Get Started</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4 font-sL">
-            {error && <p className="text-red-600">{error}</p>}
-            {success && <p className="text-green-600">{success}</p>}
-
             <div>
               <label className="block text-sm mb-1">Full Name</label>
               <input
@@ -114,6 +135,7 @@ const Signup = () => {
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
+
             <div>
               <label className="block text-sm mb-1">Institute ID</label>
               <input
@@ -124,18 +146,19 @@ const Signup = () => {
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
+
             <div>
-              <label htmlFor="email" className="block text-sm mb-1">
-                Email
-              </label>
+              <label className="block text-sm mb-1">Email</label>
               <input
                 name="email"
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
+                autoComplete="username"
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
+
             <div className="relative">
               <label className="block text-sm mb-1">Password</label>
               <input
@@ -143,7 +166,10 @@ const Signup = () => {
                 type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 pr-10"
+                autoComplete="current-password"
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 pr-10 ${
+                  passwordError ? "border-red-500" : "border-gray-300"
+                }`}
               />
               <button
                 type="button"
@@ -154,8 +180,11 @@ const Signup = () => {
               >
                 {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
               </button>
+              {passwordError && (
+                <p className="text-red-600 text-xs mt-1">{passwordError}</p>
+              )}
             </div>
-            {/* Department Dropdown */}
+
             <div>
               <label className="block text-sm mb-1">Department</label>
               <div className="relative">
@@ -176,7 +205,6 @@ const Signup = () => {
               </div>
             </div>
 
-            {/* Batch Dropdown */}
             <div>
               <label className="block text-sm mb-1">Batch</label>
               <div className="relative">
@@ -199,7 +227,12 @@ const Signup = () => {
 
             <button
               type="submit"
-              className="w-full bg-[#3C89C9] text-white py-2 rounded-md hover:bg-[#15446f] transition font-rR"
+              disabled={!!passwordError}
+              className={`w-full py-2 rounded-md transition font-rR mt-2 ${
+                passwordError
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#3C89C9] hover:bg-[#15446f] text-white"
+              }`}
             >
               Signup
             </button>

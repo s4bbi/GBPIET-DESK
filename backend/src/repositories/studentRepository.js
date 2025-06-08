@@ -6,10 +6,17 @@ class StudentRepository extends CrudRepository {
     super(Student, "Student");
   }
 
-  async getUserByEmail(email) {
+  async findByEmail(email) {
     try {
-      const student = await Student.findOne({ email });
-      return student;
+      return await Student.findOne({ email });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findByInstituteId(instituteId) {
+    try {
+      return await Student.findOne({ instituteId });
     } catch (error) {
       throw error;
     }

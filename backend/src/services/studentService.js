@@ -1,73 +1,73 @@
-const BadRequestError = require("../errors/badRequest");
-const UnauthorizedError = require("../errors/unauthorizedError");
-const { StudentRepository } = require("../repositories");
-const Auth = require("../utils/common/Auth");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const StudentRepository = require("../repositories/studentRepository");
 const studentRepository = new StudentRepository();
+const { BadRequestError, UnauthorizedError } = require("../errors/customErrors");
 
-// DRY helper for validation error handling
-function handleValidationError(error) {
-  if (error.name === "ValidationError") {
-    const errors = Object.keys(error.errors).map((field) => ({
-      field,
-      message: error.errors[field].message,
-    }));
+// Password validation regex (min 8 chars, uppercase, lowercase, digit, special char)
+const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+const signup = async (data) => {
+  // Validate password format BEFORE hashing
+  if (!passwordPattern.test(data.password)) {
     throw new BadRequestError(
-      "Validation failed for the provided data. Please correct the errors and try again.",
-      errors
+      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
     );
   }
-  throw error;
-}
 
-async function createStudent(data) {
-  try {
-    const existingStudent = await studentRepository.getUserByEmail(data.email);
-    if (existingStudent) {
-      throw new BadRequestError("User already exists with this email", {
-        email: data.email,
-      });
-    }
-    const student = await studentRepository.create(data);
-    const token = Auth.generateToken({ role: "student", id: student._id });
-    // Use proper logging or remove for production
-    console.log("Generated token for new student:", token);
-    return { student, token };
-  } catch (error) {
-    handleValidationError(error);
-    console.error("Error creating student:", error);
-    throw error;
+  // Check if user already exists by email
+  const existingUser = await studentRepository.findByEmail(data.email);
+  if (existingUser) {
+    throw new BadRequestError("Email already in use, kindly Login.");
   }
-}
 
-async function studentLogin(data) {
-  try {
-    const user = await studentRepository.getUserByEmail(data.email);
-    if (!user) {
-      throw new BadRequestError("User not found with this email", {
-        email: data.email,
-      });
-    }
-    const passwordMatch = Auth.checkPassword(data.password, user.password);
-    if (!passwordMatch) {
-      throw new UnauthorizedError(
-        "Invalid credentials",
-        `The password you entered for ${data.email} is incorrect. Please try again.`
-      );
-    }
-    const token = Auth.generateToken({
-      role: "student",
-      id: user._id,
-      department: user.department,
-    });
-    console.log("Generated token for login:", token);
-    return { user, token };
-  } catch (error) {
-    handleValidationError(error);
-    throw error;
-  }
-}
+const newStudent = await studentRepository.create(data);
+
+  // Return user info (without password)
+  return {
+    message: "Student registered successfully.",
+    user: {
+      name: newStudent.name,
+      email: newStudent.email,
+      instituteId: newStudent.instituteId,
+      department: newStudent.department,
+      batch: newStudent.batch,
+      _id: newStudent._id,
+    },
+  };
+};
+
+const login = async ({ email, password }) => {
+  // Find user by email
+  const student = await studentRepository.findByEmail(email);
+  if (!student) throw new UnauthorizedError("Invalid credentials");
+
+  // Verify password
+  const valid = await bcrypt.compare(password, student.password);
+  if (!valid) throw new UnauthorizedError("Invalid credentials");
+
+  // Create JWT token
+  const token = jwt.sign(
+    { id: student._id, role: "student", department: student.department },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  return {
+    message: "Login successful",
+    token,
+    user: {
+      name: student.name,
+      email: student.email,
+      instituteId: student.instituteId,
+      department: student.department,
+      batch: student.batch,
+      _id: student._id,
+    },
+  };
+};
 
 module.exports = {
-  createStudent,
-  studentLogin,
+  signup,
+  login,
 };

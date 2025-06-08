@@ -8,7 +8,7 @@ async function main() {
 
   try {
     await Admin.create({
-      email: "vivek.pundir33@gmail.com",
+      email: "yashpreet@gmail.com",
       password: "Abcd@1234", // plain password, should be hashed in pre-save hook
       role: "superadmin",
     });

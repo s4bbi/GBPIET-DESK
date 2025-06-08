@@ -18,19 +18,13 @@ const StudentSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, "Enter a valid email"],
   },
   password: {
-    type: String,
-    required: [true, "Password is required"],
-    minlength: [8, "Password must be at least 8 characters"],
-    validate: {
-      validator: function (value) {
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-          value
-        );
-      },
-      message:
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-    },
-  },
+  type: String,
+  required: [true, "Password is required"],
+  minlength: [8, "Password must be at least 8 characters"],
+  // **Remove the custom validate function here**
+},
+
+
   department: {
     type: String,
     enum: ["CSE", "ECE", "ME", "CE", "CSE (AIML)", "EE", "BT"],
