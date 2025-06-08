@@ -54,10 +54,11 @@ export default function Header() {
         /> */}
 
         {/* Profile */}
-        <div className="flex items-center justify-end gap-2">
+        <Link to="/profile" className="flex items-center justify-end gap-2 hover:text-blue-600 transition">
           <HiOutlineUserCircle size={28} className="text-gray-700" />
           <span className="font-sM text-gray-700 text-sm sm:text-base hidden sm:flex">{user.name}</span>
-        </div>
+        </Link>
+
       </header>
 
       {/* Sidebar - Mobile Only */}
