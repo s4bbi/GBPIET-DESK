@@ -7,6 +7,8 @@ import { HiOutlineUserCircle, HiOutlineMenu, HiOutlineX, HiOutlineTemplate, HiOu
 import { Link } from "react-router-dom";
 
 export default function Header() {
+
+  const user = JSON.parse(localStorage.getItem("user"));
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navItems = [
@@ -54,7 +56,7 @@ export default function Header() {
         {/* Profile */}
         <div className="flex items-center justify-end gap-2">
           <HiOutlineUserCircle size={28} className="text-gray-700" />
-          <span className="font-sM text-gray-700 text-sm sm:text-base hidden sm:flex">Yashpreet Singh</span>
+          <span className="font-sM text-gray-700 text-sm sm:text-base hidden sm:flex">{user.name}</span>
         </div>
       </header>
 

@@ -11,6 +11,7 @@ import bg_grid from "../../assets/images/bg_grid.svg";
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [loginRole, setLoginRole] = useState("student"); // "student" or "admin"
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,44 +29,41 @@ const Login = () => {
       return;
     }
 
-    try {
-        const res = await fetch("http://localhost:3001/api/v1/admin/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-        
-        console.log(res.body);
-        const data = await res.json();
-        console.log("Login response:", res.status, data);
-        
+    const endpoint =
+      loginRole === "admin"
+        ? "http://localhost:3001/api/v1/admin/login"
+        : "http://localhost:3001/api/v1/students/login";
 
-        if (!res.ok) {
-          console.error("Login error:", data);
-          const errorMessage =
-            data?.error?.message || data?.message || "Failed to login";
-          toast.error(errorMessage);
-        } else {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          toast.success("Login successful!");
-          navigate("/dashboard");
-        }
-      } catch (err) {
-        console.error("Login fetch error:", err);
-        toast.error("Something went wrong, please try again.");
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+      console.log("Login response:", res.status, data);
+
+      if (!res.ok) {
+        console.error("Login error:", data);
+        const errorMessage =
+          data?.error?.message || data?.message || "Failed to login";
+        toast.error(errorMessage);
+      } else {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        toast.success("Login successful!");
+        navigate("/dashboard");
       }
+    } catch (err) {
+      console.error("Login fetch error:", err);
+      toast.error("Something went wrong, please try again.");
     }
+  };
 
   return (
     <div
-      className="min-h-screen flex flex-col md:flex-row"
-      style={{
-        backgroundImage: `url(${bg_grid})`,
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-      }}
+      className="h-screen flex flex-col md:flex-row"
     >
       <ToastContainer />
 
@@ -83,10 +81,24 @@ const Login = () => {
 
       {/* Right Side - Login Form */}
       <div className="w-full md:w-1/2 flex justify-center items-center relative bg-[#235782]">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-10  z-10 m-6">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-10 z-10 m-6">
           <h2 className="text-2xl text-left mb-8 font-rR font-extralight">Welcome Back!</h2>
 
           <form className="space-y-4 font-sL" onSubmit={handleSubmit}>
+            {/* Login Role */}
+            <div>
+              <label className="block text-sm mb-1">Login as</label>
+              <select
+                value={loginRole}
+                onChange={(e) => setLoginRole(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+              >
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
+              </select>
+              
+            </div>
+
             <div>
               <label className="block text-sm mb-1">Email</label>
               <input

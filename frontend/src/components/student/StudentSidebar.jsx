@@ -1,16 +1,18 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import {
-  HiOutlineLogout,
-  HiOutlineBriefcase,
-  HiOutlineAcademicCap,
-  HiOutlineClipboardList,
-  HiOutlineTemplate,
-  HiOutlineIdentification
-} from "react-icons/hi";
+import {Link, useNavigate, useLocation } from 'react-router-dom'; // import useNavigate
+import { toast } from "react-toastify";
+import {HiOutlineTemplate, HiOutlineBriefcase, HiOutlineClipboardList, HiOutlineIdentification, HiOutlineAcademicCap, HiOutlineLogout } from "react-icons/hi"
 
 export default function StudentSidebar() {
   const location = useLocation();
+  const navigate = useNavigate(); // initialize navigate
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login"); // redirect to login
+    toast.success("Logged out successfully!");
+  };
 
   const navItems = [
     {
@@ -63,7 +65,12 @@ export default function StudentSidebar() {
           })}
         </nav>
       </div>
-      <button className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#5f8db4] transition font-sB">
+
+      {/* Logout Button */}
+      <button
+        onClick={handleLogout}
+        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-[#5f8db4] transition font-sB"
+      >
         <HiOutlineLogout size={22} />
         Logout
       </button>

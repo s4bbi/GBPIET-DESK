@@ -1,16 +1,23 @@
-// src/pages/Dashboard.jsx
 import React from 'react';
 import Layout from '../../components/layouts/StudentLayout';
 import WelcomeCard from '../../components/student/WelcomeCard';
 import JobCard from '../../components/student/JobCard';
 import ProfileActions from '../../components/student/ProfileActions';
 import ProfileCompletion from '../../components/student/ProfileCompletion';
-import {jobs} from "../../utils/jobs.js"
+import { jobs } from "../../utils/jobs.js";
 
 export default function StudentDashboard() {
+  // ✅ Get user data from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <Layout active="Dashboard">
-      <WelcomeCard name="Yashpreet Singh" branch="CSE" batch="2022-2026" />
+      <WelcomeCard
+        name={user?.name || "Student"}
+        branch={user?.department || "Branch"}
+        batch={user?.batch || "Batch"}
+      />
+      
       <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
         {/* Left: Latest Jobs */}
         <div className="flex-1">
@@ -23,6 +30,7 @@ export default function StudentDashboard() {
             </div>
           </div>
         </div>
+
         {/* Right: Profile Actions & Completion */}
         <div className="w-full lg:w-72 flex flex-col gap-4 md:gap-6">
           <ProfileActions />

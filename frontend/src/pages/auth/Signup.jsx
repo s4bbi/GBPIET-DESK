@@ -98,12 +98,6 @@ const Signup = () => {
   return (
     <div
       className="min-h-screen w-full flex flex-col md:flex-row"
-      style={{
-        backgroundImage: `url(${bg_grid})`,
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-      }}
     >
       <ToastContainer />
 
