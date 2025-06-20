@@ -1,40 +1,56 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const StudentSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "Name is required"],
-  },
-  instituteId: {          // Added this field
-    type: String,
-    required: [true, "Institute ID is required"],
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
-    match: [/.+\@.+\..+/, "Enter a valid email"],
-  },
-  password: {
-  type: String,
-  required: [true, "Password is required"],
-  minlength: [8, "Password must be at least 8 characters"],
-  // **Remove the custom validate function here**
-},
+const StudentSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+    },
+    instituteId: {
+      // Added this field
+      type: String,
+      required: [true, "Institute ID is required"],
+      unique: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      match: [/.+\@.+\..+/, "Enter a valid email"],
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: [8, "Password must be at least 8 characters"],
+      // **Remove the custom validate function here**
+    },
 
-
-  department: {
-    type: String,
-    enum: ["CSE", "ECE", "ME", "CE", "CSE (AIML)", "EE", "BT"],
-    required: true,
+    department: {
+      type: String,
+      enum: ["CSE", "ECE", "ME", "CE", "CSE (AIML)", "EE", "BT"],
+      required: true,
+    },
+    batch: {
+      // Changed from `year` to `batch` as string or number
+      type: String,
+      required: true,
+    },
+    skills: {
+      type: [String],
+      default: [],
+    },
+    achievements: {
+      type: [String],
+      default: [],
+    },
+    resume: {
+      type: String,
+      default: null,
+    },
   },
-  batch: {           // Changed from `year` to `batch` as string or number
-    type: String,
-    required: true,
-  },
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 StudentSchema.pre("save", async function (next) {
   if (this.isModified("password")) {

@@ -21,6 +21,18 @@ class StudentRepository extends CrudRepository {
       throw error;
     }
   }
+  async updateStudentProfile(id, data) {
+    try {
+      const response = await Student.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+      });
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 
 module.exports = StudentRepository;

@@ -2,10 +2,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const StudentRepository = require("../repositories/studentRepository");
 const studentRepository = new StudentRepository();
-const { BadRequestError, UnauthorizedError } = require("../errors/customErrors");
+const {
+  BadRequestError,
+  UnauthorizedError,
+} = require("../errors/customErrors");
 
 // Password validation regex (min 8 chars, uppercase, lowercase, digit, special char)
-const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const passwordPattern =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const signup = async (data) => {
   // Validate password format BEFORE hashing
@@ -21,7 +25,7 @@ const signup = async (data) => {
     throw new BadRequestError("Email already in use, kindly Login.");
   }
 
-const newStudent = await studentRepository.create(data);
+  const newStudent = await studentRepository.create(data);
 
   // Return user info (without password)
   return {
@@ -66,8 +70,36 @@ const login = async ({ email, password }) => {
     },
   };
 };
-
+async function updateStudentProfile(id, data, resume) {
+  try {
+    if (resume) {
+      data.resume = resume;
+    }
+    const updatedStudent = await studentRepository.updateStudentProfile(
+      id,
+      data
+    );
+    if (!updatedStudent) {
+      throw new BadRequestError("Student not found", { id });
+    }
+    return updatedStudent;
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      const errors = Object.keys(error.errors).map((field) => ({
+        field,
+        message: error.errors[field].message,
+      }));
+      throw new BadRequestError(
+        "Validation failed for the provided data. Please correct the errors and try again.",
+        errors
+      );
+    }
+    console.error("Error updating student profile:", error);
+    throw error;
+  }
+}
 module.exports = {
   signup,
   login,
+  updateStudentProfile,
 };
