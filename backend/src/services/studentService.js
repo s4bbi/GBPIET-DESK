@@ -1,11 +1,14 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+
 const StudentRepository = require("../repositories/studentRepository");
 const studentRepository = new StudentRepository();
 const {
   BadRequestError,
   UnauthorizedError,
 } = require("../errors/customErrors");
+const sendEmail = require("../utils/twilio");
 
 // Password validation regex (min 8 chars, uppercase, lowercase, digit, special char)
 const passwordPattern =
@@ -98,8 +101,81 @@ async function updateStudentProfile(id, data, resume) {
     throw error;
   }
 }
+// async function requestPasswordReset(email) {
+//   try {
+//     const result = await studentRepository.generatePasswordResetToken(email);
+//     if (!result) {
+//       throw new UnauthorizedError("No user found with this email", { email });
+//     }
+//     //  resetURL = `http://localhost:3001/reset-password/${result.resetToken}`;
+//     const resetURL = `http://localhost:3001/api/v1/students/reset-password/${result.resetToken}`;
+
+//     // const message = `Forgot your password? Click to reset: ${resetURL}`;
+//     await sendEmail({
+//       to: result.student.email,
+//       name: result.student.name,
+//       // subject: "Your password reset token (valid for 10 mins)",
+//       resetURL: resetURL,
+//     });
+//     console.log("link", resetURL);
+
+//     return true;
+//   } catch (error) {
+//     console.error("Error requesting password reset:", error);
+//     throw error;
+//   }
+// }
+async function requestPasswordReset(email) {
+  try {
+    const { resetToken, student } =
+      await studentRepository.generatePasswordResetToken(email);
+
+    if (!student) {
+      throw new UnauthorizedError("No user found with this email", { email });
+    }
+
+    const resetURL = `http://localhost:3001/api/v1/students/reset-password/${resetToken}`;
+
+    await sendEmail({
+      to: student.email,
+      name: student.name,
+      resetURL,
+    });
+
+    console.log("🔗 Reset URL:", resetURL);
+
+    // ✅ Return resetToken in result so controller can access it
+    return {
+      success: true,
+      message: "Password reset link sent to your email",
+      resetToken, // Include this in response
+    };
+  } catch (error) {
+    console.error("Error requesting password reset:", error);
+    throw error;
+  }
+}
+
+async function resetPassword(token, newPassword) {
+  try {
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    // const hashedToken = bcrypt.hashSync(token, 10);
+    const student = await studentRepository.findByResetToken(hashedToken);
+    if (!student) {
+      throw new UnauthorizedError("Invalid or expired reset token");
+    }
+    // const newHashedPassword = await bcrypt.hash(newPassword, 10);
+    await studentRepository.updatePassword(student._id, newPassword);
+    return true;
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    throw error;
+  }
+}
 module.exports = {
   signup,
   login,
   updateStudentProfile,
+  requestPasswordReset,
+  resetPassword,
 };

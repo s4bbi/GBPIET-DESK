@@ -17,5 +17,15 @@ router.patch(
   upload.single("resume"),
   StudentController.updateStudentProfile
 );
+router.post(
+  "/forgot-password",
+  UserMiddleware.validateUser(["email"]),
+  StudentController.forgorPassword
+);
+router.post(
+  "/reset-password/:token",
+  UserMiddleware.validateUser(["newPassword"]),
+  StudentController.resetPassword
+);
 
 module.exports = router;
