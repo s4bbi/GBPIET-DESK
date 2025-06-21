@@ -1,55 +1,57 @@
-const twilio = require("twilio");
+const nodemailer = require("nodemailer");
 const { ServerConfig } = require("../config");
-const BadRequestError = require("../errors/badRequest");
-const client = twilio(
-  ServerConfig.TWILIO_ACCOUNT_SID,
-  ServerConfig.TWILIO_AUTH_TOKEN
-);
 
-async function sendOtp(phone, otp) {
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: ServerConfig.GMAIL_USER,
+    pass: ServerConfig.GMAIL_PASS,
+  },
+});
+
+const sendResetPasswordEmail = async ({ to, name, resetURL }) => {
   try {
-    // Remove any non-digit characters from the phone number
-    const cleanedPhone = phone.replace(/\D/g, "");
+    await transporter.sendMail({
+      from: `"College CMS" <${ServerConfig.GMAIL_USER}>`,
+      to,
+      subject: "🔐 Reset Your Password - College CMS",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #d0d7de; border-radius: 8px; overflow: hidden;">
+          <div style="background-color: #0d6efd; color: white; padding: 20px; text-align: center;">
+            <h1 style="margin: 0;">Password Reset Request</h1>
+            <p style="margin: 5px 0;">Secure Your Account</p>
+          </div>
 
-    // Check if the phone number is exactly 10 digits long
-    if (cleanedPhone.length !== 10) {
-      throw new BadRequestError("Phone number must be exactly 10 digits", {
-        reason: "invalid_phone_length",
-        phone: cleanedPhone,
-      });
-    }
+          <div style="padding: 20px; color: #333;">
+            <p>Hi <strong>${name}</strong>,</p>
+            <p>We received a request to reset your password. Click the button below to reset it:</p>
 
-    // Check if it's a valid 10-digit Indian phone number (must start with 6-9)
-    if (!/^[6-9]\d{9}$/.test(cleanedPhone)) {
-      throw new BadRequestError("Invalid Indian phone number", {
-        reason: "invalid_phone_number",
-        phone: cleanedPhone,
-      });
-    }
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${resetURL}" style="background-color: #0d6efd; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+                Reset Password
+              </a>
+            </div>
 
-    // Format the phone number for Twilio (assuming India)
-    const formattedPhone = `+91${cleanedPhone}`;
+            <p>If you didn’t request this, you can safely ignore this email. Your password won’t change until you access the link above and set a new one.</p>
 
-    // Send OTP via Twilio
-    const message = await client.messages.create({
-      body: `Your OTP is ${otp}`,
-      from: ServerConfig.TWILIO_PHONE_NUMBER,
-      to: formattedPhone,
+            <p style="margin-top: 40px; font-size: 14px; color: #666;">
+              This link will expire in 15 minutes for your security.
+            </p>
+
+            <p style="font-size: 12px; color: #999; border-top: 1px solid #eee; padding-top: 15px; margin-top: 40px;">
+              College CMS Team<br>
+              (This is an automated email — please do not reply.)
+            </p>
+          </div>
+        </div>
+      `,
     });
 
-    console.log("OTP sent successfully:", message.sid);
+    console.log(`✅ Reset password email sent to ${to}`);
   } catch (error) {
-    console.error("Error sending OTP:", error);
-
-    // Throw a BadRequestError with detailed info
-    throw new BadRequestError("Failed to send OTP", {
-      reason: error.code || "service_error",
-      phone: phone,
-      details: error.message,
-    });
+    console.error("❌ Failed to send reset password email:", error);
+    throw error;
   }
-}
-
-module.exports = {
-  sendOtp,
 };
+
+module.exports = sendResetPasswordEmail;

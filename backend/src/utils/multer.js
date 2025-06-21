@@ -2,35 +2,30 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
+// Ensure directory exists or create it
+const resumePath = path.join(__dirname, "../uploads/resumes");
+if (!fs.existsSync(resumePath)) {
+  fs.mkdirSync(resumePath, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const userId = req.user?.id || "anonymous"; // fallback
-    const uploadPath = path.join(__dirname, `../uploads/${userId}`);
-
-    // Create folder if not exists
-    fs.mkdirSync(uploadPath, { recursive: true });
-    cb(null, uploadPath);
+    cb(null, resumePath);
   },
-
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
-    const uniqueName = `${Date.now()}-${file.fieldname}${ext}`;
-    cb(null, uniqueName);
+    const filename = `${Date.now()}-${file.fieldname}${ext}`;
+    cb(null, filename);
   },
 });
 
 const fileFilter = (req, file, cb) => {
-  const allowed = /jpeg|jpg|png/;
-  const extValid = allowed.test(path.extname(file.originalname).toLowerCase());
-  const mimeValid = allowed.test(file.mimetype);
-  if (extValid && mimeValid) cb(null, true);
-  else cb(new Error("Only .jpg, .jpeg, .png formats allowed!"));
+  if (file.mimetype === "application/pdf") {
+    cb(null, true);
+  } else {
+    cb(new Error("Only PDF files are allowed"), false);
+  }
 };
 
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
-});
-
+const upload = multer({ storage, fileFilter });
 module.exports = upload;
