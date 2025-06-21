@@ -2,8 +2,8 @@ const BaseError = require("./baseError");
 const { StatusCodes } = require("http-status-codes");
 
 class UnauthorizedError extends BaseError {
-  constructor(message = "Unauthorized", details = null) {
-    super("UnauthorizedError", StatusCodes.UNAUTHORIZED, message, details);
+  constructor(message, details = null, code = "UNAUTHORIZED") {
+    super(message, details, code, StatusCodes.UNAUTHORIZED);
   }
 }
 

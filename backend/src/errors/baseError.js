@@ -1,14 +1,13 @@
 class BaseError extends Error {
-  constructor(name, statusCode, description, details = null) {
-    super(description);
-
-    this.name = name;
-    this.statusCode = statusCode;
+  constructor(message, details = null, code = "INTERNAL_ERROR", statusCode = 500) {
+    super(message);
+    this.name = this.constructor.name;
     this.details = details;
-
-    // Maintain proper stack trace (only available in V8 engines like Node.js)
+    this.code = code;
+    this.statusCode = statusCode;
     Error.captureStackTrace(this, this.constructor);
   }
 }
+
 
 module.exports = BaseError;

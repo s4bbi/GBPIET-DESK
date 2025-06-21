@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();`
+const router = express.Router();
 
 const { AdminController } = require("../../controllers");
 const { AuthMiddleware, UserMiddleware } = require("../../middlewares");
@@ -10,11 +10,13 @@ router.post(
   AuthMiddleware.requireSuperadmin,
   AdminController.createAdmin
 );
+
 router.post(
   "/login",
   UserMiddleware.validateUser(["email", "password"]),
   AdminController.signIn
 );
+
 router.delete(
   "/:id",
   AuthMiddleware.isLoggedIn,

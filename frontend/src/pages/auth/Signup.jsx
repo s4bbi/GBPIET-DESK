@@ -118,7 +118,7 @@ const Signup = () => {
         <div className="w-full max-w-md rounded-2xl shadow-2xl p-10 z-10 bg-white m-6">
           <h2 className="text-2xl text-left mb-8 font-rR font-extralight">Let’s Get Started</h2>
 
-          <form onSubmit={handleSubmit} className="space-y-4 font-sL">
+          <form onSubmit={handleSubmit} className="space-y-4 font-sR">
             <div>
               <label className="block text-sm mb-1">Full Name</label>
               <input

@@ -1,27 +1,26 @@
 const { StatusCodes } = require("http-status-codes");
-// const BaseError = require("../errors/baseError");
-const BaseError = require("../errors/baseError");
 
 function errorHandler(err, req, res, next) {
-  const isOperational = err instanceof BaseError;
+  const isOperational = err.statusCode && err.code;
 
-  const statusCode = isOperational
-    ? err.statusCode
-    : StatusCodes.INTERNAL_SERVER_ERROR;
+  const statusCode = isOperational ? err.statusCode : StatusCodes.INTERNAL_SERVER_ERROR;
   const message = isOperational ? err.message : "Internal Server Error";
-  const errorDetails = isOperational
-    ? err.details || null
-    : {
-        name: err.name,
-        message: err.message,
-        stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-      };
+  const code = isOperational ? err.code : "INTERNAL_ERROR";
 
   res.status(statusCode).json({
     success: false,
     message,
-    error: errorDetails,
+    code,
     data: {},
+    error: process.env.NODE_ENV === "development"
+      ? {
+          name: err.name,
+          message: err.message,
+          code: err.code,
+          stack: err.stack,
+          details: err.details || null
+        }
+      : undefined
   });
 }
 

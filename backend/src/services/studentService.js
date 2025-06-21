@@ -134,14 +134,17 @@ async function requestPasswordReset(email) {
       throw new UnauthorizedError("No user found with this email", { email });
     }
 
-    const resetURL = `http://localhost:3001/api/v1/students/reset-password/${resetToken}`;
-
+    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+    
+    console.log("before mailing")
+    
     await sendEmail({
       to: student.email,
       name: student.name,
       resetURL,
     });
-
+    
+    console.log("after mailing")
     console.log("🔗 Reset URL:", resetURL);
 
     // ✅ Return resetToken in result so controller can access it
@@ -159,12 +162,20 @@ async function requestPasswordReset(email) {
 async function resetPassword(token, newPassword) {
   try {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-    // const hashedToken = bcrypt.hashSync(token, 10);
+
     const student = await studentRepository.findByResetToken(hashedToken);
     if (!student) {
-      throw new UnauthorizedError("Invalid or expired reset token");
+      throw new UnauthorizedError("Invalid reset token", null, "INVALID_RESET_TOKEN");
     }
-    // const newHashedPassword = await bcrypt.hash(newPassword, 10);
+
+    if (student.resetPasswordExpires < Date.now()) {
+      throw new UnauthorizedError(
+        "Reset password link has expired. Please request a new one.",
+        null,
+        "TOKEN_EXPIRED"
+      );
+    }
+
     await studentRepository.updatePassword(student._id, newPassword);
     return true;
   } catch (error) {
@@ -172,6 +183,9 @@ async function resetPassword(token, newPassword) {
     throw error;
   }
 }
+
+
+
 module.exports = {
   signup,
   login,

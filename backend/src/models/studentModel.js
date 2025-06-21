@@ -66,19 +66,21 @@ const StudentSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 StudentSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   next();
 });
+
 StudentSchema.methods.createResetPasswordToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
   this.resetPasswordToken = crypto
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-  this.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // Token valid for 10 minutes
+  this.resetPasswordExpires = Date.now() + 1  * 60 * 1000; // Token valid for 10 minutes
   return resetToken;
 };
 

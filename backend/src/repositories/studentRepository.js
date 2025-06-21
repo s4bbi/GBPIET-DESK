@@ -48,24 +48,25 @@ class StudentRepository extends CrudRepository {
       throw error;
     }
   }
+ 
   async findByResetToken(hashedToken) {
-    try {
-      return await Student.findOne({
-        resetPasswordToken: hashedToken,
-        resetPasswordExpires: { $gt: Date.now() },
-      });
-    } catch (error) {
-      throw error;
-    }
+  try {
+    return await Student.findOne({ resetPasswordToken: hashedToken });
+  } catch (error) {
+    throw error;
   }
-  async updatePassword(studentId, newPassword) {
+}
+
+
+ async updatePassword(studentId, newPassword) {
     const student = await Student.findById(studentId);
-    student.password = newPassword;
+    student.password = newPassword;   // assign plain password
     student.resetPasswordToken = undefined;
     student.resetPasswordExpires = undefined;
-    await student.save();
+    await student.save();  // mongoose pre-save hook will hash it automatically
     return student;
-  }
+}
+
 }
 
 module.exports = StudentRepository;
