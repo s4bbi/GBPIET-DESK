@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import StudentLayout from '../../components/layouts/StudentLayout';
 import { HiOutlineAcademicCap } from "react-icons/hi";
 import axios from "axios";
