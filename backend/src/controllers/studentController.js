@@ -24,7 +24,9 @@ const getStudentProfile = async (req, res, next) => {
     const studentId = req.params.id;
     const student = await StudentService.getStudentProfile(studentId);
     if (!student) {
-      return res.status(404).json({ success: false, message: "Student not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Student not found" });
     }
     res.status(StatusCodes.OK).json({
       success: true,
@@ -45,7 +47,10 @@ const updateStudentProfile = async (req, res, next) => {
       updateData.resume = `/uploads/resumes/${req.file.filename}`;
     }
 
-    const updatedStudent = await StudentService.updateStudentProfile(studentId, updateData);
+    const updatedStudent = await StudentService.updateStudentProfile(
+      studentId,
+      updateData
+    );
     res.status(StatusCodes.OK).json({
       success: true,
       message: "Profile updated successfully",
