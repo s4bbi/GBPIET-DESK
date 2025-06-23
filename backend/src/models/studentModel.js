@@ -45,11 +45,9 @@ const StudentSchema = new mongoose.Schema(
 
     skills: {
       type: [String],
-      default: [],
     },
     achievements: {
       type: [String],
-      default: [],
     },
     resume: {
       type: String,

@@ -5,7 +5,7 @@ import StudentSidebar from "../student/StudentSidebar";
 
 export default function StudentLayout({ children, active }) {
   return (
-    <div className="flex bg-[#F5F5F5] h-screen">
+    <div className="flex bg-[#F5F5F5] h-full">
       {/* Sidebar */}
       <div className="hidden md:flex">
         <StudentSidebar active={active} />

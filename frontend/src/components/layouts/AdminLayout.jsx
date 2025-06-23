@@ -5,7 +5,7 @@ import AdminHeader from "../admin/AdminHeader";
 
 export default function AdminLayout({ active, children }) {
   return (
-    <div className="flex bg-[#F5F5F5] h-screen">
+    <div className="flex bg-[#F5F5F5] h-full">
       <div className="hidden md:flex">
         <AdminSidebar active={active} />
       </div>

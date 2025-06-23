@@ -1,18 +1,30 @@
 import React from 'react';
-import {Link, useNavigate, useLocation } from 'react-router-dom'; // import useNavigate
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from "react-toastify";
-import {HiOutlineTemplate, HiOutlineBriefcase, HiOutlineClipboardList, HiOutlineIdentification, HiOutlineAcademicCap, HiOutlineLogout } from "react-icons/hi"
+import { 
+  HiOutlineTemplate, 
+  HiOutlineBriefcase, 
+  HiOutlineClipboardList, 
+  HiOutlineIdentification, 
+  HiOutlineAcademicCap, 
+  HiOutlineLogout,
+  HiOutlineUser
+} from "react-icons/hi";
 
 export default function StudentSidebar() {
   const location = useLocation();
-  const navigate = useNavigate(); // initialize navigate
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/login"); // redirect to login
+    navigate("/login");
     toast.success("Logged out successfully!");
   };
+
+  // Get user ID from localStorage
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const userId = storedUser?._id;
 
   const navItems = [
     {
@@ -34,6 +46,11 @@ export default function StudentSidebar() {
       label: "Trainings",
       icon: <HiOutlineIdentification size={22} />,
       to: "/trainings"
+    },
+    {
+      label: "Profile",
+      icon: <HiOutlineUser size={22} />,
+      to: `/profile/${userId}`
     }
   ];
 
@@ -45,6 +62,7 @@ export default function StudentSidebar() {
             <HiOutlineAcademicCap size={48} className='flex items-center' />
           </div>
         </div>
+
         <nav className="flex flex-col gap-2 text-center font-sM">
           {navItems.map(({ label, icon, to }) => {
             const isActive = location.pathname === to;

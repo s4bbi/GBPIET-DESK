@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import StudentLayout from '../../components/layouts/StudentLayout';
 import { HiOutlineAcademicCap } from "react-icons/hi";
@@ -93,7 +94,7 @@ export default function ProfilePage() {
               <HiOutlineAcademicCap size={48} />
             </div>
             <div className="text-center sm:text-left">
-              <h3 className="text-2xl font-semibold text-[#235782]">{user.name || "Student Name"}</h3>
+              <h3 className="text-2xl font-sB text-[#235782]">{user.name || "Student Name"}</h3>
               <p className="text-gray-500 text-sm">{user.email}</p>
             </div>
           </div>
@@ -173,6 +174,10 @@ export default function ProfilePage() {
 }
 
 function ProfileField({ label, value, name, editable, onChange }) {
+  const displayValue = Array.isArray(value)
+    ? (value.length > 0 ? value.join(", ") : "Not Provided")
+    : (value || "Not Provided");
+
   return (
     <div className="flex flex-col">
       <span className="text-gray-500 font-medium mb-1">{label}</span>
@@ -180,12 +185,20 @@ function ProfileField({ label, value, name, editable, onChange }) {
         <input
           type="text"
           name={name}
-          value={value || ""}
-          onChange={onChange}
+          value={Array.isArray(value) ? value.join(", ") : value || ""}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (Array.isArray(value)) {
+              // Convert comma-separated string to array
+              onChange({ target: { name, value: val.split(",").map(s => s.trim()).filter(s => s) } });
+            } else {
+              onChange(e);
+            }
+          }}
           className="border border-gray-300 rounded px-2 py-1"
         />
       ) : (
-        <span className="text-gray-800">{value || "Not Provided"}</span>
+        <span className="text-gray-800">{displayValue}</span>
       )}
     </div>
   );

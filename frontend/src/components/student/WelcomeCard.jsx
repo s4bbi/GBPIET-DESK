@@ -9,7 +9,7 @@ function WelcomeCard({ name, branch, batch }) {
 
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-b from-[#3C89C9] to-[#235782] text-white rounded-xl pl-4 sm:pl-10 pb-4 pt-4 mb-6">
+    <div className="flex flex-col sm:flex-row items-center justify-between bg-gradient-to-b from-[#3C89C9] to-[#235782] text-white rounded-xl pl-4 sm:pl-10 pb-4 pt-4 mb-6 md:-mt-14">
       <div className="w-full sm:w-auto">
         <div className="text-xs sm:text-sm mb-4 sm:mb-10 font-sL">
           {today}
