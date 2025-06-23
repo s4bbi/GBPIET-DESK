@@ -4,6 +4,9 @@ const { HiringService } = require("../services");
 async function createHiring(req, res, next) {
   try {
     const post = await HiringService.createHiring({
+      
+
+      
       ...req.body,
       createdBy: req.user?.id,
     });

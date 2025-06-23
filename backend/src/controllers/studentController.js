@@ -22,6 +22,19 @@ const loginStudent = async (req, res, next) => {
     next(err);
   }
 };
+async function getProfile(req, res, next) {
+  try {
+    const studentId = req.user.id; // Provided by auth middleware
+    const student = await StudentService.getStudentById(studentId);
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      data: student,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function updateStudentProfile(req, res, next) {
   try {
     const studentId = req.user.id; // Assuming req.user is populated by authentication middleware
