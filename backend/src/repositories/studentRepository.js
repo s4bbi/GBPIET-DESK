@@ -1,6 +1,7 @@
 const { UnauthorizedError } = require("../errors/customErrors");
 const Student = require("../models/studentModel");
 const CrudRepository = require("./crudRepository");
+const crypto = require("crypto");
 
 class StudentRepository extends CrudRepository {
   constructor() {
@@ -8,65 +9,50 @@ class StudentRepository extends CrudRepository {
   }
 
   async findByEmail(email) {
-    try {
-      return await Student.findOne({ email });
-    } catch (error) {
-      throw error;
-    }
+    return Student.findOne({ email });
   }
 
   async findByInstituteId(instituteId) {
-    try {
-      return await Student.findOne({ instituteId });
-    } catch (error) {
-      throw error;
-    }
+    return Student.findOne({ instituteId });
   }
+
   async updateStudentProfile(id, data) {
-    try {
-      const response = await Student.findByIdAndUpdate(id, data, {
-        new: true,
-        runValidators: true,
-      });
-      return response;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+    return Student.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true });
   }
+
+  async findById(id) {
+    return Student.findById(id);
+  }
+
   async generatePasswordResetToken(email) {
-    try {
-      const student = await Student.findOne({ email });
-      if (!student) {
-        // throw new Error("No user found with this email");
-        throw new UnauthorizedError("No user found with this email", { email });
-      }
-      const resetToken = student.createResetPasswordToken();
-      await student.save({ validateBeforeSave: false });
-      return { resetToken, student };
-    } catch (error) {
-      throw error;
-    }
+    const student = await Student.findOne({ email });
+    if (!student) throw new UnauthorizedError("No user found with this email", { email });
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    student.resetPasswordToken = hashedToken;
+    student.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
+    await student.save({ validateBeforeSave: false });
+
+    return { resetToken, student };
   }
- 
+
   async findByResetToken(hashedToken) {
-  try {
-    return await Student.findOne({ resetPasswordToken: hashedToken });
-  } catch (error) {
-    throw error;
+    return Student.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
   }
-}
 
-
- async updatePassword(studentId, newPassword) {
+  async updatePassword(studentId, newPassword) {
     const student = await Student.findById(studentId);
-    student.password = newPassword;   // assign plain password
+    student.password = newPassword;
     student.resetPasswordToken = undefined;
     student.resetPasswordExpires = undefined;
-    await student.save();  // mongoose pre-save hook will hash it automatically
+    await student.save();
     return student;
-}
-
+  }
 }
 
 module.exports = StudentRepository;
