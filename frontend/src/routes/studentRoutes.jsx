@@ -12,7 +12,7 @@ const studentRoutes = [
   { path: "/jobs", element: <JobsPage /> },
   { path: "/internships", element: <InternshipsPage /> },
   { path: "/trainings", element: <TrainingsPage /> },
-  { path: "/profile", element: <StudentProfile /> },
+  { path: "/profile/:id", element: <StudentProfile /> },
   {path: "/reset-password/:token", element: <ResetPassword /> }
 
 ];

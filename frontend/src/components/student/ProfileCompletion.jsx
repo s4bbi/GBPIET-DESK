@@ -1,15 +1,17 @@
 import React from 'react';
-// src/components/ProfileCompletion.js
+import { useNavigate } from 'react-router-dom';
+
 export default function ProfileCompletion({ percent }) {
-  // Calculate the stroke-dasharray for the circular progress
+  const navigate = useNavigate();
   const circlePercent = Math.max(0, Math.min(percent, 100));
   const dashArray = `${(circlePercent * 100) / 100}, 100`;
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <div className="bg-white rounded-xl shadow p-4 sm:p-5 flex flex-col items-center w-full max-w-xs mx-auto">
       {/* Circular progress bar */}
-      <div className="relative w-16 h-16 sm:w-28 sm:h-28 mb-3 sm:mb-4">
-        <svg className="" viewBox="0 0 36 36">
+      <div className="relative w-24 h-24 sm:w-28 sm:h-28 mb-4">
+        <svg className="w-full h-full" viewBox="0 0 36 36">
           <path
             className="text-gray-200"
             d="M18 2.0845
@@ -40,9 +42,16 @@ export default function ProfileCompletion({ percent }) {
           </text>
         </svg>
       </div>
-      <div className="text-center text-xs sm:text-sm font-sB">
+
+      <div className="text-center text-sm sm:text-base font-sB mb-3">
         Your Profile is {circlePercent}% Complete.
       </div>
+
+      <button 
+        onClick={() => navigate(`/profile/${user?._id}`)}
+        className="px-4 py-2 bg-[#235782] text-white text-sm font-sB rounded hover:bg-[#1d476a] transition">
+        Complete Your Profile
+      </button>
     </div>
   );
 }

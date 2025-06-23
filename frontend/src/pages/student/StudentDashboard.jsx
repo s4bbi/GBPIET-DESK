@@ -33,7 +33,7 @@ export default function StudentDashboard() {
 
         {/* Right: Profile Actions & Completion */}
         <div className="w-full lg:w-72 flex flex-col gap-4 md:gap-6">
-          <ProfileActions />
+          {/* <ProfileActions /> */}
           <ProfileCompletion percent={82} />
         </div>
       </div>
