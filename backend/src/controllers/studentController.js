@@ -18,7 +18,8 @@ const loginStudent = async (req, res, next) => {
     next(err);
   }
 };
-async function updateStudentProfile(req, res, next) {
+
+const getStudentProfile = async (req, res, next) => {
   try {
     const studentId = req.params.id;
     const student = await StudentService.getStudentProfile(studentId);
