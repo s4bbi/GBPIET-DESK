@@ -71,9 +71,9 @@ const Login = () => {
         storage.setToken(data.token);
         if (data.user) storage.setUser(data.user);
         toast.success("Login successful!");
-        const route = loginRole === "admin"
-                        ? "/admin/dashboard"
-                        : "/dashboard"
+        const route = loginRole === "student"
+                        ? "/dashboard"
+                        : "/admin/dashboard";
         navigate(route);
       }
     } catch (err) {
