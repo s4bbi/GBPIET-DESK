@@ -45,10 +45,14 @@ const StudentSchema = new mongoose.Schema(
 
     skills: {
       type: [String],
+      default:[],
     },
+
     achievements: {
       type: [String],
+      default:[],
     },
+    
     resume: {
       type: String,
       default: null,
@@ -78,7 +82,7 @@ StudentSchema.methods.createResetPasswordToken = function () {
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-  this.resetPasswordExpires = Date.now() + 1  * 60 * 1000; // Token valid for 10 minutes
+  this.resetPasswordExpires = Date.now() + 10  * 60 * 1000; // Token valid for 10 minutes
   return resetToken;
 };
 

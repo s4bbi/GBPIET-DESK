@@ -51,37 +51,48 @@ export default function ProfilePage() {
     setFile(e.target.files[0]);
   };
 
-  const handleSave = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("cgpa", user.cgpa);
-      formData.append("achievements", user.achievements);
-      formData.append("skills", user.skills);
-      if (file) {
-        formData.append("resume", file);
-      }
+const handleSave = async () => {
+  try {
+    const formData = new FormData();
+    formData.append("cgpa", user.cgpa);
 
-      const token = localStorage.getItem("token");
-      const res = await axios.put(
-        `http://localhost:3001/api/v1/students/profile/${user._id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    // Split only at save time
+    const achievementsArray = typeof user.achievements === "string"
+      ? user.achievements.split(",").map(s => s.trim()).filter(s => s)
+      : user.achievements;
 
-      setUser(res.data.data);
-      setEditMode(false);
-      setFile(null);
-      toast.success("Profile updated successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update profile");
+    const skillsArray = typeof user.skills === "string"
+      ? user.skills.split(",").map(s => s.trim()).filter(s => s)
+      : user.skills;
+
+    formData.append("achievements", JSON.stringify(achievementsArray));
+    formData.append("skills", JSON.stringify(skillsArray));
+
+    if (file) {
+      formData.append("resume", file);
     }
-  };
+
+    const token = localStorage.getItem("token");
+    const res = await axios.put(
+      `http://localhost:3001/api/v1/students/profile/${user._id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setUser(res.data.data);
+    setEditMode(false);
+    setFile(null);
+    toast.success("Profile updated successfully!");
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to update profile");
+  }
+};
 
   return (
     <StudentLayout>
@@ -94,7 +105,7 @@ export default function ProfilePage() {
               <HiOutlineAcademicCap size={48} />
             </div>
             <div className="text-center sm:text-left">
-              <h3 className="text-2xl font-sB text-[#235782]">{user.name || "Student Name"}</h3>
+              <h3 className="text-2xl font-semibold text-[#235782]">{user.name || "Student Name"}</h3>
               <p className="text-gray-500 text-sm">{user.email}</p>
             </div>
           </div>
@@ -174,10 +185,6 @@ export default function ProfilePage() {
 }
 
 function ProfileField({ label, value, name, editable, onChange }) {
-  const displayValue = Array.isArray(value)
-    ? (value.length > 0 ? value.join(", ") : "Not Provided")
-    : (value || "Not Provided");
-
   return (
     <div className="flex flex-col">
       <span className="text-gray-500 font-medium mb-1">{label}</span>
@@ -186,19 +193,13 @@ function ProfileField({ label, value, name, editable, onChange }) {
           type="text"
           name={name}
           value={Array.isArray(value) ? value.join(", ") : value || ""}
-          onChange={(e) => {
-            const val = e.target.value;
-            if (Array.isArray(value)) {
-              // Convert comma-separated string to array
-              onChange({ target: { name, value: val.split(",").map(s => s.trim()).filter(s => s) } });
-            } else {
-              onChange(e);
-            }
-          }}
+          onChange={onChange}
           className="border border-gray-300 rounded px-2 py-1"
         />
       ) : (
-        <span className="text-gray-800">{displayValue}</span>
+        <span className="text-gray-800">
+          {Array.isArray(value) ? value.join(", ") : value || "Not Provided"}
+        </span>
       )}
     </div>
   );

@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const StudentRepository = require("../repositories/studentRepository");
 const studentRepository = new StudentRepository();
 const { BadRequestError, UnauthorizedError } = require("../errors/customErrors");
-const sendEmail = require("../utils/twilio");
+const sendEmail = require("../utils/mailhandler");
 
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
