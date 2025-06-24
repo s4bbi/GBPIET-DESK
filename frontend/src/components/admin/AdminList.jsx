@@ -1,32 +1,52 @@
-import React, { useState } from "react";
-import Layout from "../../components/layouts/AdminLayout";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { HiUsers } from "react-icons/hi";
 import { FiTrash2, FiPlus } from "react-icons/fi";
 
 export default function AdminList() {
-  const [admins, setAdmins] = useState([
-    { id: 1, name: "Yashpreet Singh", isCurrent: true },
-    { id: 2, name: "Ayush Joshi", isCurrent: false },
-    { id: 3, name: "Vivek Pundir", isCurrent: false }
-  ]);
+  const [admins, setAdmins] = useState([]);
+  const [isSuperAdmin, setIsSuperAdmin] = useState(true);
 
-  // Assume current user role
-  const [isSuperAdmin, setIsSuperAdmin] = useState(true); // you can replace this with actual role check from your auth system
+  useEffect(() => {
+    const fetchAdmins = async () => {
+      try {
+        const response = await axios.get("http://localhost:3001/api/v1/admin/all", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+        console.log(response.data);
+        setAdmins(response?.data?.data || []);
+      } catch (error) {
+        console.error("Error fetching admins:", error);
+        setAdmins([]);
+      }
+    };
 
-  const user = localStorage.getItem("");
-  console.log("user: " + user)
+    fetchAdmins();
+  }, []);
 
-  const handleDelete = (id) => {
-    setAdmins((prev) => prev.filter((admin) => admin.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/v1/admins/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+      setAdmins((prev) => prev.filter((admin) => admin._id !== id));
+    } catch (error) {
+      console.error("Error deleting admin:", error);
+    }
   };
 
   const handleAddAdmin = () => {
     const name = prompt("Enter admin name:");
     if (name) {
       const newAdmin = {
-        id: Date.now(),
+        _id: Date.now().toString(),
         name,
-        isCurrent: false
+        email: `${name}@example.com`,
+        role: "admin"
       };
       setAdmins([...admins, newAdmin]);
     }
@@ -48,26 +68,26 @@ export default function AdminList() {
           </button>
         )}
       </div>
-      <ul className="space-y-3 font-sR">
-        {admins.map((admin) => (
-          <li
-            key={admin.id}
-            className="flex items-center justify-between border-b pb-2 text-gray-700"
-          >
-            <span>
-              {admin.name} {admin.isCurrent && <span className="text-sm text-gray-500">(You)</span>}
-            </span>
-            {!admin.isCurrent && isSuperAdmin && (
-              <button
-                onClick={() => handleDelete(admin.id)}
-                className="text-red-500 hover:text-red-600 transition"
-              >
-                <FiTrash2 size={18} />
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
+
+      {admins && admins.length > 0 ? (
+        <ul className="space-y-3 font-sR">
+          {admins.map((admin) => (
+            <li key={admin._id} className="flex items-center justify-between border-b pb-2 text-gray-700">
+              <span>{admin.name || admin.email}</span>
+              {isSuperAdmin && (
+                <button
+                  onClick={() => handleDelete(admin._id)}
+                  className="text-red-500 hover:text-red-600 transition"
+                >
+                  <FiTrash2 size={18} />
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="text-gray-400 text-sm text-center">No admins found.</div>
+      )}
     </div>
   );
 }

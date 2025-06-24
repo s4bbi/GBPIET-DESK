@@ -28,7 +28,7 @@ router.get('/all',AuthMiddleware.isLoggedIn,
   AdminController.getAllAdmins
 );
 router.get('/stats',AuthMiddleware.isLoggedIn,AuthMiddleware.requireAdmin,AdminController.getStats);
-router.get('/',AuthMiddleware.isLoggedIn,AuthMiddleware.requireAdmin,AdminController.getAllStudents)
+router.get('/students',AuthMiddleware.isLoggedIn,AuthMiddleware.requireAdmin,AdminController.getAllStudents)
 // router.get(
 //   "/",
 //   AuthMiddleware.isLoggedIn,

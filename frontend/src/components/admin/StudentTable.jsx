@@ -1,6 +1,6 @@
 import React, { useMemo, useState, Fragment, useEffect } from "react";
 import { useTable, useSortBy, useGlobalFilter } from "react-table";
-import { students } from "../../utils/studentsData.js";
+import axios from "axios";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
@@ -10,7 +10,29 @@ import { HiChevronDown, HiChevronUp, HiDownload } from "react-icons/hi";
 import Pagination from "../../components/common/Pagination";
 
 export default function StudentsTable() {
-  const data = useMemo(() => students, []);
+  const [data, setData] = useState([]);
+  const [sortBy, setSortBy] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await axios.get("http://localhost:3001/api/v1/admin/students", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
+        });
+        console.log("Fetched students:", response.data);
+        setData(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching students:", error);
+        setData([]);
+      }
+    };
+
+    fetchStudents();
+  }, []);
 
   const columns = useMemo(
     () => [
@@ -49,10 +71,6 @@ export default function StudentsTable() {
     []
   );
 
-  const [sortBy, setSortBy] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10;
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -76,31 +94,27 @@ export default function StudentsTable() {
   const selectedRows = rows.slice(startIndex, startIndex + rowsPerPage);
   const totalPages = Math.ceil(rows.length / rowsPerPage);
 
-  const getFilteredData = () => {
-    return rows.map(row => row.original);
-  };
+  // Export Functions
+  const getFilteredData = () => rows.map(row => row.original);
 
   const exportToExcel = () => {
-    const filteredData = getFilteredData();
-    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const ws = XLSX.utils.json_to_sheet(getFilteredData());
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Students");
     XLSX.writeFile(wb, "students_data.xlsx");
   };
 
   const exportToCSV = () => {
-    const filteredData = getFilteredData();
-    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const ws = XLSX.utils.json_to_sheet(getFilteredData());
     const csv = XLSX.utils.sheet_to_csv(ws);
     const blob = new Blob([csv], { type: "text/csv" });
     saveAs(blob, "students_data.csv");
   };
 
   const exportToPDF = () => {
-    const filteredData = getFilteredData();
     const doc = new jsPDF();
     const headers = [["Name", "Institute ID", "Department", "Email", "CGPA", "Skills"]];
-    const tableData = filteredData.map(student => [
+    const tableData = getFilteredData().map(student => [
       student.name,
       student.instituteId,
       student.department,
@@ -109,13 +123,7 @@ export default function StudentsTable() {
       student.skills
     ]);
     doc.text("Students Data", 14, 20);
-    autoTable(doc, {
-      startY: 30,
-      head: headers,
-      body: tableData,
-      theme: "striped",
-      headStyles: { fillColor: [60, 137, 201] },
-    });
+    autoTable(doc, { startY: 30, head: headers, body: tableData, theme: "striped", headStyles: { fillColor: [60, 137, 201] } });
     doc.save("students_data.pdf");
   };
 
@@ -134,7 +142,6 @@ export default function StudentsTable() {
           placeholder="Search"
           value={globalFilter || ""}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          aria-label="Search students"
         />
 
         <div className="flex gap-3 flex-wrap items-center justify-start sm:justify-end w-full sm:w-auto">
@@ -186,7 +193,7 @@ export default function StudentsTable() {
           </Menu>
 
           <Menu as="div" className="relative inline-block text-left">
-            <Menu.Button className="inline-flex justify-center items-center gap-2 px-4 py-2 rounded-full border text-gray-600 hover:bg-gray-100 shadow-sm cursor-pointer hover:shadow-[0_0_8px_2px_rgba(41,69,179,0.6)] transition-shadow duration-300 text-sm sm:text-base" aria-label="Export data">
+            <Menu.Button className="inline-flex justify-center items-center gap-2 px-4 py-2 rounded-full border text-gray-600 hover:bg-gray-100 shadow-sm cursor-pointer hover:shadow-[0_0_8px_2px_rgba(41,69,179,0.6)] transition-shadow duration-300 text-sm sm:text-base">
               Export Data
               <HiChevronDown className="w-4 h-4" />
             </Menu.Button>
@@ -232,12 +239,12 @@ export default function StudentsTable() {
       </div>
 
       <div className="overflow-x-auto rounded shadow-sm border border-gray-200">
-        <table {...getTableProps()} className="min-w-full divide-y divide-gray-200 table-auto" role="table" aria-label="Students data table">
+        <table {...getTableProps()} className="min-w-full divide-y divide-gray-200 table-auto">
           <thead className="bg-gray-50 font-sB">
             {headerGroups.map(headerGroup => (
               <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
                 {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()} className="px-3 py-4 text-left text-gray-700 whitespace-nowrap text-xs sm:text-sm" key={column.id} scope="col">
+                  <th {...column.getHeaderProps()} className="px-3 py-4 text-left text-gray-700 whitespace-nowrap text-xs sm:text-sm" key={column.id}>
                     {column.render("Header")}
                   </th>
                 ))}
