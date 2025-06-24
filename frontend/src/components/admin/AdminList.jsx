@@ -10,6 +10,16 @@ export default function AdminList() {
     { id: 3, name: "Vivek Pundir", isCurrent: false }
   ]);
 
+//   const user = JSON.parse(localStorage.getItem("data"));
+// console.log("user:", user);
+
+  for (let i = 0; i < localStorage.length; i++) {
+  const key = localStorage.key(i);
+  const value = localStorage.getItem(key);
+  console.log(`${key}: ${value}`);
+}
+
+
   const handleDelete = (id) => {
     setAdmins((prev) => prev.filter((admin) => admin.id !== id));
   };
