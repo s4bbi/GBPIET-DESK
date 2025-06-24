@@ -4,10 +4,8 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { HiChevronDown } from "react-icons/hi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import collegelogo from "../../assets/images/collegelogowhiteV.svg";
 import ill1 from "../../assets/images/su_ill_1.svg";
-import bg_grid from "../../assets/images/bg_grid.svg";
 import { departments, batches } from "../../utils/data.js";
 
 const Signup = () => {

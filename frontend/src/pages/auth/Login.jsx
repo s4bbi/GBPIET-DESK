@@ -4,6 +4,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { storage } from "../../utils/storage.js";
 import collegelogo from "../../assets/images/collegelogowhiteV.svg";
 import ill1 from "../../assets/images/su_ill_1.svg";
 
@@ -38,7 +39,6 @@ const Login = () => {
         });
 
         const data = await res.json();
-
         if (!res.ok) {
           toast.error(data?.message || "Failed to send reset link.");
         } else {
@@ -66,14 +66,18 @@ const Login = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        const errorMessage =
-          data?.error?.message || data?.message || "Failed to login";
-        toast.error(errorMessage);
+        toast.error(data?.error?.message || data?.message || "Failed to login");
       } else {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        storage.setToken(data.token);
+        if (data.user) storage.setUser(data.user);
         toast.success("Login successful!");
-        navigate("/dashboard");
+
+        // ✅ Navigate based on role
+        if (loginRole === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/dashboard");
+        }
       }
     } catch (err) {
       toast.error("Something went wrong, please try again.");
@@ -84,7 +88,6 @@ const Login = () => {
     <div className="h-screen flex flex-col md:flex-row font-sM">
       <ToastContainer />
       
-      {/* Left Section */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-[#235782] text-white p-6">
         <div className="mb-6 flex gap-4 items-center">
           <img src={collegelogo} alt="GBPIET Logo" className="w-20 lg:w-28" />
@@ -96,7 +99,6 @@ const Login = () => {
         <img src={ill1} alt="Students Illustration" className="w-4/5 max-w-md hidden lg:flex" />
       </div>
 
-      {/* Right Section */}
       <div className="w-full md:w-1/2 flex justify-center items-center bg-[#235782] p-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-10 z-10">
           <h2 className="text-2xl mb-8 text-left font-rR">
@@ -104,7 +106,6 @@ const Login = () => {
           </h2>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
-            {/* Only show role selection when not in forgot password mode */}
             {!forgotPasswordMode && (
               <div>
                 <label className="block text-sm mb-1">Login as</label>
@@ -119,7 +120,6 @@ const Login = () => {
               </div>
             )}
 
-            {/* Email Input */}
             <div>
               <label className="block text-sm mb-1">Email</label>
               <input
@@ -131,7 +131,6 @@ const Login = () => {
               />
             </div>
 
-            {/* Password Input (only when not forgot mode) */}
             {!forgotPasswordMode && (
               <div className="relative">
                 <label className="block text-sm mb-1">Password</label>
@@ -146,7 +145,6 @@ const Login = () => {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-9 text-gray-500 hover:text-gray-700"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
                 </button>
@@ -161,24 +159,22 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Forgot password link */}
           {!forgotPasswordMode && (
-            <p
-              onClick={() => setForgotPasswordMode(true)}
-              className="text-sm text-blue-600 text-left mt-4 cursor-pointer hover:underline"
-            >
-              Forgot Password?
-            </p>
-          )}
+            <>
+              <p
+                onClick={() => setForgotPasswordMode(true)}
+                className="text-sm text-blue-600 text-left mt-4 cursor-pointer hover:underline"
+              >
+                Forgot Password?
+              </p>
 
-          {/* Signup link */}
-          {!forgotPasswordMode && (
-            <p className="text-sm text-center mt-2">
-              Don’t have an account?{" "}
-              <Link to="/signup" className="text-blue-600 underline">
-                Signup
-              </Link>
-            </p>
+              <p className="text-sm text-center mt-2">
+                Don’t have an account?{" "}
+                <Link to="/signup" className="text-blue-600 underline">
+                  Signup
+                </Link>
+              </p>
+            </>
           )}
         </div>
       </div>

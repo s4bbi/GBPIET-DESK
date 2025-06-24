@@ -6,13 +6,13 @@ import InternshipsPage from "../pages/student/InternshipsPage";
 import TrainingsPage from "../pages/student/TrainingsPage";
 import StudentProfile from "../pages/student/StudentProfile";
 import ResetPassword from "../components/student/ResetPassword";
-import ProtectedRoute from "../pages/auth/ProtectedRoute";  // <== Import
+import ProtectedRoute from "../pages/auth/ProtectedRoute";  // ✅ Correct import
 
 const studentRoutes = [
   {
     path: "/dashboard",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRole="student">
         <StudentDashboard />
       </ProtectedRoute>
     )
@@ -20,7 +20,7 @@ const studentRoutes = [
   {
     path: "/jobs",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRole="student">
         <JobsPage />
       </ProtectedRoute>
     )
@@ -28,7 +28,7 @@ const studentRoutes = [
   {
     path: "/internships",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRole="student">
         <InternshipsPage />
       </ProtectedRoute>
     )
@@ -36,7 +36,7 @@ const studentRoutes = [
   {
     path: "/trainings",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRole="student">
         <TrainingsPage />
       </ProtectedRoute>
     )
@@ -44,14 +44,14 @@ const studentRoutes = [
   {
     path: "/profile/:id",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute allowedRole="student">
         <StudentProfile />
       </ProtectedRoute>
     )
   },
   {
     path: "/reset-password/:token",
-    element: <ResetPassword />
+    element: <ResetPassword />   // this is public
   }
 ];
 
