@@ -37,12 +37,28 @@ const getStudentProfile = async (req, res, next) => {
   }
 };
 
+const parseIfStringifiedArray = (input) => {
+  if (typeof input === "string") {
+    try {
+      const parsed = JSON.parse(input);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (_) {
+      // Do nothing if invalid JSON
+    }
+  }
+  return input;
+};
+
 const updateStudentProfile = async (req, res, next) => {
   try {
     const studentId = req.user.id;
-    let updateData = req.body;
+    let updateData = { ...req.body };
 
-    // Handle resume file if uploaded
+    // ✅ Safely parse these fields
+    updateData.skills = parseIfStringifiedArray(updateData.skills);
+    updateData.achievements = parseIfStringifiedArray(updateData.achievements);
+
+    // ✅ Handle resume upload
     if (req.file) {
       updateData.resume = `/uploads/resumes/${req.file.filename}`;
     }
@@ -51,6 +67,7 @@ const updateStudentProfile = async (req, res, next) => {
       studentId,
       updateData
     );
+
     res.status(StatusCodes.OK).json({
       success: true,
       message: "Profile updated successfully",
