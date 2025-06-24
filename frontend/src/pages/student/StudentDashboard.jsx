@@ -6,12 +6,24 @@ import ProfileActions from '../../components/student/ProfileActions';
 import ProfileCompletion from '../../components/student/ProfileCompletion';
 import { jobs } from "../../utils/jobs.js";
 
+
+
+// localStorage.setItem("user", JSON.stringify({
+//   name: "Vivek Pundir",
+//   department: "CSE",
+//   batch: "2025"
+// }));
+
+
 export default function StudentDashboard() {
+  const storedUser = localStorage.getItem("user");
+const user = storedUser ? JSON.parse(storedUser) : null;
   // ✅ Get user data from localStorage
-  const user = JSON.parse(localStorage.getItem("user"));
+//  const user = JSON.parse(localStorage.getItem("user"));
+  // console.log("user:" + user)
 
   return (
-    <Layout active="Dashboard">
+    <Layout active="Dashboard     ">
       <WelcomeCard
         name={user?.name || "Student"}
         branch={user?.department || "Branch"}

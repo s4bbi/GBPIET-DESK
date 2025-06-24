@@ -73,7 +73,10 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("Login successful!");
-        navigate("/dashboard");
+        const route = loginRole === "admin"
+                        ? "/admin/dashboard"
+                        : "/dashboard"
+        navigate(route);
       }
     } catch (err) {
       toast.error("Something went wrong, please try again.");
