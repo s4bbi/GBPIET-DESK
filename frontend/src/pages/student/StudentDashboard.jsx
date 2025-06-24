@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../../components/layouts/StudentLayout';
 import WelcomeCard from '../../components/student/WelcomeCard';
 import JobCard from '../../components/student/JobCard';
@@ -31,7 +31,6 @@ const user = storedUser ? JSON.parse(storedUser) : null;
       />
       
       <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
-        {/* Left: Latest Jobs */}
         <div className="flex-1">
           <div className="bg-white rounded-xl shadow p-4 md:p-8">
             <h2 className="text-lg md:text-2xl font-sB mb-4 md:mb-6">Latest Job Openings</h2>
@@ -43,7 +42,6 @@ const user = storedUser ? JSON.parse(storedUser) : null;
           </div>
         </div>
 
-        {/* Right: Profile Actions & Completion */}
         <div className="w-full lg:w-72 h-96">
           {/* <ProfileActions /> */}
           <ProfileCompletion />

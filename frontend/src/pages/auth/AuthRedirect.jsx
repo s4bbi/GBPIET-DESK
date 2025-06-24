@@ -1,14 +1,20 @@
-// src/components/auth/AuthRedirect.jsx
-import React from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AuthRedirect = ({ children }) => {
-  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+  const [checked, setChecked] = useState(false);
 
-  if (token) {
-    return <Navigate to="/dashboard" replace />;
-  }
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/dashboard', { replace: true });
+    } else {
+      setChecked(true);
+    }
+  }, [navigate]);
 
+  if (!checked) return null;
   return children;
 };
 
