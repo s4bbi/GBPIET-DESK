@@ -11,7 +11,11 @@ node_modules
 dist
 dist-ssr
 *.local
+<<<<<<< HEAD
 git.doc
+=======
+
+>>>>>>> 6a8e30d6cf323597df47fd2c957521091e6c9bf6
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
