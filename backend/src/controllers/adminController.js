@@ -13,7 +13,7 @@ async function createAdmin(req, res, next) {
       data: admin,
     });
   } catch (error) {
-    next(error);
+    next(error);11
   }
 }
 

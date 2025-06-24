@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import { storage } from "../../utils/storage.js";
 import collegelogo from "../../assets/images/collegelogowhiteV.svg";
 import ill1 from "../../assets/images/su_ill_1.svg";
@@ -13,6 +12,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginRole, setLoginRole] = useState("student");
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -24,20 +24,24 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!formData.email || (!forgotPasswordMode && !formData.password)) {
       toast.error("Please fill all fields.");
+      setIsLoading(false);
       return;
     }
 
     if (forgotPasswordMode) {
       try {
-        const res = await fetch("http://localhost:3001/api/v1/students/forgot-password", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email }),
-        });
-
+        const res = await fetch(
+          "http://localhost:3001/api/v1/students/forgot-password",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: formData.email }),
+          }
+        );
         const data = await res.json();
         if (!res.ok) {
           toast.error(data?.message || "Failed to send reset link.");
@@ -47,6 +51,8 @@ const Login = () => {
         }
       } catch (err) {
         toast.error("Something went wrong. Try again.");
+      } finally {
+        setIsLoading(false);
       }
       return;
     }
@@ -62,29 +68,36 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
-      const data = await res.json();
+      const responseData = await res.json();
+      console.log("Login response:", responseData); // Debug
 
       if (!res.ok) {
-        toast.error(data?.error?.message || data?.message || "Failed to login");
+        toast.error(
+          responseData?.error?.message || responseData?.message || "Failed to login"
+        );
       } else {
-        storage.setToken(data.token);
-        if (data.user) storage.setUser(data.user);
+        const { token, user } = responseData;
+        storage.setToken(token);
+        storage.setUser(user);
         toast.success("Login successful!");
-        const route = loginRole === "student"
-                        ? "/dashboard"
-                        : "/admin/dashboard";
-        navigate(route);
+
+        setTimeout(() => {
+          const route = user.role === "admin" ? "/admin/dashboard" : "/dashboard";
+          navigate(route, { replace: true });
+        }, 500);
+
       }
     } catch (err) {
+      console.error("Login error:", err); // Debug
       toast.error("Something went wrong, please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="h-screen flex flex-col md:flex-row font-sM">
       <ToastContainer />
-      
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-[#235782] text-white p-6">
         <div className="mb-6 flex gap-4 items-center">
           <img src={collegelogo} alt="GBPIET Logo" className="w-20 lg:w-28" />
@@ -95,13 +108,11 @@ const Login = () => {
         </div>
         <img src={ill1} alt="Students Illustration" className="w-4/5 max-w-md hidden lg:flex" />
       </div>
-
       <div className="w-full md:w-1/2 flex justify-center items-center bg-[#235782] p-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-10 z-10">
           <h2 className="text-2xl mb-8 text-left font-rR">
             {forgotPasswordMode ? "Reset Password" : "Welcome Back!"}
           </h2>
-
           <form className="space-y-4" onSubmit={handleSubmit}>
             {!forgotPasswordMode && (
               <div>
@@ -116,7 +127,6 @@ const Login = () => {
                 </select>
               </div>
             )}
-
             <div>
               <label className="block text-sm mb-1">Email</label>
               <input
@@ -127,7 +137,6 @@ const Login = () => {
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
               />
             </div>
-
             {!forgotPasswordMode && (
               <div className="relative">
                 <label className="block text-sm mb-1">Password</label>
@@ -147,15 +156,14 @@ const Login = () => {
                 </button>
               </div>
             )}
-
             <button
               type="submit"
-              className="w-full bg-[#3C89C9] text-white py-2 rounded-md hover:bg-[#15446f] transition mt-2"
+              disabled={isLoading}
+              className="w-full bg-[#3C89C9] text-white py-2 rounded-md hover:bg-[#15446f] transition mt-2 disabled:opacity-70"
             >
-              {forgotPasswordMode ? "Send Reset Link" : "Login"}
+              {isLoading ? "Processing..." : (forgotPasswordMode ? "Send Reset Link" : "Login")}
             </button>
           </form>
-
           {!forgotPasswordMode && (
             <>
               <p
@@ -164,7 +172,6 @@ const Login = () => {
               >
                 Forgot Password?
               </p>
-
               <p className="text-sm text-center mt-2">
                 Don’t have an account?{" "}
                 <Link to="/signup" className="text-blue-600 underline">

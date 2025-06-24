@@ -23,7 +23,7 @@ const user = storedUser ? JSON.parse(storedUser) : null;
   // console.log("user:" + user)
 
   return (
-    <Layout active="Dashboard     ">
+    <Layout active="Dashboard">
       <WelcomeCard
         name={user?.name || "Student"}
         branch={user?.department || "Branch"}

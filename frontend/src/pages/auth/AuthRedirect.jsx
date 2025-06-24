@@ -1,29 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { storage } from '../../utils/storage.js';
 
 const AuthRedirect = ({ children }) => {
   const navigate = useNavigate();
-  const [checked, setChecked] = useState(false); // Flag to avoid early rendering
+  const location = useLocation();
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     const token = storage.getToken();
     const user = storage.getUser();
 
     if (token && user) {
-      // ✅ Redirect if already authenticated
-      if (user.role === 'admin') {
+      const currentPath = location.pathname;
+      if (user.role === 'admin' && currentPath !== '/admin/dashboard') {
         navigate('/admin/dashboard', { replace: true });
-      } else {
+      } else if (user.role === 'student' && currentPath !== '/dashboard') {
         navigate('/dashboard', { replace: true });
+      } else {
+        setChecked(true);
       }
     } else {
-      // ✅ Render children (login/signup) if not authenticated
       setChecked(true);
     }
-  }, [navigate]);
+  }, [navigate, location]);
 
-  // Avoid rendering login/signup page before auth check completes
   if (!checked) return null;
 
   return children;
