@@ -74,16 +74,13 @@ Before you begin, ensure you have met the following requirements:
 
 1️⃣ **Clone the repository**
 
-```bash
 git clone https://github.com/s4bbi/GBPIET-DESK
 
 2️⃣ **Navigate into the project directory**
 
-```bash
 cd GBPIET-DESK
 
 3️⃣ **Install dependencies**
 
-```bash
 npm install
 
