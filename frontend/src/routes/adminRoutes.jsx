@@ -9,7 +9,6 @@ import UploadJobs from '../pages/admin/UploadJobs';
 import UploadInternships from '../pages/admin/UploadJobs';
 import UploadTrainings from '../pages/admin/UploadJobs';
 
-
 const adminRoutes = [
   { path: "/admin/dashboard", element: <AdminDashboard /> },
   { path: "/admin/students", element: <StudentsData /> },

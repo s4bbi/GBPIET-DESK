@@ -51,37 +51,39 @@ const Login = () => {
       return;
     }
 
-    const endpoint = ["admin", "superadmin"].includes(loginRole)
-  ? "http://localhost:3001/api/v1/admin/login"
-  : "http://localhost:3001/api/v1/students/login";
+    const endpoint =
+      loginRole === ("admin" || "superadmin")
+        ? "http://localhost:3001/api/v1/admin/login"
+        : "http://localhost:3001/api/v1/students/login";
 
-try {
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
-  });
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-  const data = await res.json();
-console.log("Login response:", data);
-  if (!res.ok) {
-    const errorMessage = data?.error?.message || data?.message || "Failed to login";
-    toast.error(errorMessage);
-  } else {
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    localStorage.setItem("role", loginRole);
-
-    console.log("Login response:", data);
-    
-    toast.success("Login successful!");
-    const route = loginRole === "admin" ? "/admin/dashboard" : "/dashboard";
-    navigate(route);
+      // In the successful login response handler:
+const data = await res.json();
+if (!res.ok) {
+  const errorMessage = data?.error?.message || data?.message || "Failed to login";
+  toast.error(errorMessage);
+} else {
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("user", JSON.stringify(data.data));
+  toast.success("Login successful!");
+  
+  let route = "/dashboard";
+  if (data.data.role === "admin" || data.data.role === "superadmin") {
+    route = "/admin/dashboard";
   }
-} catch (err) {
-  toast.error("Something went wrong, please try again.");
+  navigate(route);
 }
-  }
+    } catch (err) {
+      toast.error("Something went wrong, please try again.");
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col md:flex-row font-sM">
       <ToastContainer />
@@ -117,7 +119,7 @@ console.log("Login response:", data);
                 >
                   <option value="student">Student</option>
                   <option value="admin">Admin</option>
-                  <option value="superadmin">Super Admin</option>
+
                   
                 </select>
               </div>
