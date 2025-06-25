@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import collegelogo from "../../assets/images/collegelogowhiteV.svg";
 import ill1 from "../../assets/images/su_ill_1.svg";
 
@@ -12,6 +11,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginRole, setLoginRole] = useState("student");
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -23,9 +23,11 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!formData.email || (!forgotPasswordMode && !formData.password)) {
       toast.error("Please fill all fields.");
+      setIsLoading(false);
       return;
     }
 
@@ -50,6 +52,8 @@ const Login = () => {
         }
       } catch (err) {
         toast.error("Something went wrong. Try again.");
+      } finally {
+        setIsLoading(false);
       }
       return;
     }
@@ -66,6 +70,9 @@ const Login = () => {
         body: JSON.stringify(formData),
       });
 
+      // const responseData = await res.json();
+      // console.log("Login response:", responseData); // Debug
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -76,14 +83,19 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         // const data = await res.json();
-        // { console.log("Login response:", data)}
+        {
+          console.log("Login response:", data);
+        }
 
         toast.success("Login successful!");
         const route = loginRole === "admin" ? "/admin/dashboard" : "/dashboard";
         navigate(route);
       }
     } catch (err) {
+      console.error("Login error:", err); // Debug
       toast.error("Something went wrong, please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -113,7 +125,6 @@ const Login = () => {
           <h2 className="text-2xl mb-8 text-left font-rR">
             {forgotPasswordMode ? "Reset Password" : "Welcome Back!"}
           </h2>
-
           <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Only show role selection when not in forgot password mode */}
             {!forgotPasswordMode && (
@@ -169,12 +180,16 @@ const Login = () => {
                 </button>
               </div>
             )}
-
             <button
               type="submit"
-              className="w-full bg-[#3C89C9] text-white py-2 rounded-md hover:bg-[#15446f] transition mt-2"
+              disabled={isLoading}
+              className="w-full bg-[#3C89C9] text-white py-2 rounded-md hover:bg-[#15446f] transition mt-2 disabled:opacity-70"
             >
-              {forgotPasswordMode ? "Send Reset Link" : "Login"}
+              {isLoading
+                ? "Processing..."
+                : forgotPasswordMode
+                ? "Send Reset Link"
+                : "Login"}
             </button>
           </form>
 
