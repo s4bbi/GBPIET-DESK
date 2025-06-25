@@ -10,7 +10,7 @@ import ill1 from "../../assets/images/su_ill_1.svg";
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [loginRole, setLoginRole] = useState('student');
+  const [loginRole, setLoginRole] = useState("student");
   const [forgotPasswordMode, setForgotPasswordMode] = useState(false);
   const navigate = useNavigate();
 
@@ -31,11 +31,14 @@ const Login = () => {
 
     if (forgotPasswordMode) {
       try {
-        const res = await fetch("http://localhost:3001/api/v1/students/forgot-password", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: formData.email }),
-        });
+        const res = await fetch(
+          "http://localhost:3001/api/v1/students/forgot-password",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: formData.email }),
+          }
+        );
 
         const data = await res.json();
 
@@ -73,12 +76,10 @@ const Login = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         // const data = await res.json();
-{ console.log("Login response:", data)}
+        // { console.log("Login response:", data)}
 
         toast.success("Login successful!");
-        const route = loginRole === "admin"
-                        ? "/admin/dashboard"
-                        : "/dashboard";
+        const route = loginRole === "admin" ? "/admin/dashboard" : "/dashboard";
         navigate(route);
       }
     } catch (err) {
@@ -89,7 +90,7 @@ const Login = () => {
   return (
     <div className="h-screen flex flex-col md:flex-row font-sM">
       <ToastContainer />
-      
+
       {/* Left Section */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-[#235782] text-white p-6">
         <div className="mb-6 flex gap-4 items-center">
@@ -99,7 +100,11 @@ const Login = () => {
             <p className="text-sm lg:text-lg">Pauri-Garhwal, Uttarakhand</p>
           </div>
         </div>
-        <img src={ill1} alt="Students Illustration" className="w-4/5 max-w-md hidden lg:flex" />
+        <img
+          src={ill1}
+          alt="Students Illustration"
+          className="w-4/5 max-w-md hidden lg:flex"
+        />
       </div>
 
       {/* Right Section */}
@@ -123,7 +128,6 @@ const Login = () => {
                   <option value="admin">Admin</option>
 
                   {console.log("role: " + loginRole)}
-                  
                 </select>
               </div>
             )}
@@ -157,7 +161,11 @@ const Login = () => {
                   className="absolute right-4 top-9 text-gray-500 hover:text-gray-700"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? <AiFillEyeInvisible size={20} /> : <AiFillEye size={20} />}
+                  {showPassword ? (
+                    <AiFillEyeInvisible size={20} />
+                  ) : (
+                    <AiFillEye size={20} />
+                  )}
                 </button>
               </div>
             )}
