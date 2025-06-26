@@ -32,6 +32,10 @@ const hiringPostSchema = new mongoose.Schema(
       type: Date,
       required: [true, "Last date to apply is required"],
     },
+    stipend: {
+      type: String,
+      required: [true, "Stipend is required"],
+    },
     eligibility: {
       type: String,
       required: [true, "Eligibility is required"],
@@ -57,6 +61,18 @@ const hiringPostSchema = new mongoose.Schema(
       enum: ["job", "internship", "training"],
       required: true,
     },
+
+     opportunityLink: {
+      type: String,
+      required: [true, "Opportunity link is required"],
+      // validate: {
+      //   validator: function (v) {
+      //     return /^(https?:\/\/)/.test(v);
+      //   },
+      //   message: props => `${props.value} is not a valid URL!`,
+      // },
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",

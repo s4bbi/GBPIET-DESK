@@ -11,9 +11,17 @@ router.post(
   HiringController.createHiring
 );
 
-router.get("/getopp", AuthMiddleware.isLoggedIn, HiringController.getHiringPosts);
+// router.get(
+//   "/job",
+//   AuthMiddleware.isLoggedIn,
+//   HiringController.getHiringPosts
+// );
 
-router.get("/latest", AuthMiddleware.isLoggedIn, HiringController.getLatestPosts);
+router.get(
+  "/latest",
+  AuthMiddleware.isLoggedIn,
+  HiringController.getLatestPosts
+);
 
 router.get(
   "/type/:type",
