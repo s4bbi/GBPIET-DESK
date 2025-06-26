@@ -81,7 +81,7 @@ const Login = () => {
         toast.error(errorMessage);
       } else {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(data.data));
         // const data = await res.json();
         {
           console.log("Login response:", data);

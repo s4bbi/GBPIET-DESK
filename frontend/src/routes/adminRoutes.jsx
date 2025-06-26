@@ -8,7 +8,6 @@ import PostInternships from "../pages/admin/PostInternships";
 import UploadOpportunities from "../pages/admin/UploadOpportunities";
 import JobDescription from "../pages/student/JobDescription";
 
-
 const adminRoutes = [
   { path: "/admin/dashboard", element: <AdminDashboard /> },
   { path: "/admin/students", element: <StudentsData /> },

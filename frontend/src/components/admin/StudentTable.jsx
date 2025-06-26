@@ -35,41 +35,50 @@ export default function StudentsTable() {
   }, []);
 
   const columns = useMemo(
-    () => [
-      { Header: "Name", accessor: "name" },
-      { Header: "Institute ID", accessor: "instituteId" },
-      { Header: "Department", accessor: "department" },
-      { Header: "Email", accessor: "email" },
-      { Header: "CGPA", accessor: "cgpa" },
-      { Header: "Skills", accessor: "skills" },
-      {
-        Header: "Resume",
-        accessor: "resume",
-        Cell: ({ value }) => (
-          <a href={value} target="_blank" rel="noopener noreferrer">
-            <button className="bg-gray-100 border px-2 py-1 rounded text-xs sm:text-sm whitespace-nowrap font-sR cursor-pointer">
-              View File
-            </button>
-          </a>
-        ),
-        disableSortBy: true,
-      },
-      {
-        Header: "Export",
-        accessor: "export",
-        Cell: ({ row }) => (
-          <button
-            className="font-sR bg-[#3C89C9] text-white px-2 py-1 rounded text-xs sm:text-sm whitespace-nowrap cursor-pointer hover:bg-[#235782] transition duration-150"
-            onClick={() => exportSingleStudent(row.original)}
-          >
-            Export
+  () => [
+    { Header: "Name", accessor: "name" },
+    { Header: "Institute ID", accessor: "instituteId" },
+    { Header: "Department", accessor: "department" },
+    { Header: "Email", accessor: "email" },
+    { Header: "CGPA", accessor: "cgpa" },
+    {
+  Header: "Skills",
+  accessor: "skills",
+  Cell: ({ value }) => {
+    console.log("skillvalue:", value);
+    return value?.join(", ") || "-";
+  }
+},
+
+    {
+      Header: "Resume",
+      accessor: "resume",
+      Cell: ({ value }) => (
+        <a href={value} target="_blank" rel="noopener noreferrer">
+          <button className="bg-gray-100 border px-2 py-1 rounded text-xs sm:text-sm whitespace-nowrap font-sR cursor-pointer">
+            View File
           </button>
-        ),
-        disableSortBy: true,
-      },
-    ],
-    []
-  );
+        </a>
+      ),
+      disableSortBy: true,
+    },
+    {
+      Header: "Export",
+      accessor: "export",
+      Cell: ({ row }) => (
+        <button
+          className="font-sR bg-[#3C89C9] text-white px-2 py-1 rounded text-xs sm:text-sm whitespace-nowrap cursor-pointer hover:bg-[#235782] transition duration-150"
+          onClick={() => exportSingleStudent(row.original)}
+        >
+          Export
+        </button>
+      ),
+      disableSortBy: true,
+    },
+  ],
+  []
+);
+
 
   const {
     getTableProps,
