@@ -17,7 +17,7 @@ export default function JobsList({ search = "" }) {
   useEffect(() => {
     async function fetchJobs() {
       try {
-        const res = await axios.get("http://localhost:3001/api/v1/hiring/getopp", {
+        const res = await axios.get("http://localhost:3001/api/v1/hiring/type/job", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

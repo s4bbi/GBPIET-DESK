@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function JobCard() {
   const [jobs, setJobs] = useState([]);
@@ -7,12 +7,15 @@ export default function JobCard() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get("http://localhost:3001/api/v1/hiring/latest", {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          "http://localhost:3001/api/v1/hiring/latest",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
 
         const jobList = res.data?.data;
         if (Array.isArray(jobList) && jobList.length > 0) {
@@ -60,13 +63,26 @@ export default function JobCard() {
             <div className="flex flex-col sm:items-center mb-2 sm:mb-0">
               <div className="text-md font-sL">{role}</div>
               <div className="text-sm text-gray-500 font-sL">{type}</div>
-              <div className="text-sm text-gray-500 font-sL">Apply by {formattedDate}</div>
+              <div className="text-sm text-gray-500 font-sL">
+                Apply by {formattedDate}
+              </div>
             </div>
             {/* Apply Button */}
             <button className="w-full sm:w-auto bg-gradient-to-b from-[#3C89C9] to-[#235782] text-white px-6 py-2 rounded-3xl flex items-center justify-center gap-1 hover:bg-blue-700 transition font-sL mt-2 sm:mt-0">
               Apply
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
               </svg>
             </button>
           </div>
