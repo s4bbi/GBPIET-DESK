@@ -10,14 +10,11 @@ router.post(
   AuthMiddleware.requireAdmin,
   HiringController.createHiring
 );
-router.get("/", AuthMiddleware.isLoggedIn, HiringController.getHiringPosts);
-router.get("/lat", AuthMiddleware.isLoggedIn, HiringController.getLatestPosts);
 router.get(
   "/type/:type",
   AuthMiddleware.isLoggedIn,
   HiringController.getPostByType
 );
-router.get("/:id", AuthMiddleware.isLoggedIn, HiringController.getHiring);
 router.delete(
   "/:id",
   AuthMiddleware.isLoggedIn,
