@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../../components/layouts/StudentLayout";
-import JobsList from "../../components/common/JobsList"; // Reusable component
+import JobsList from "../../components/common/TrainingsList"; // Reusable component
 
 export default function TrainingsPage() {
   const [search, setSearch] = useState("");
@@ -19,7 +19,7 @@ export default function TrainingsPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      <JobsList search={search} filterByType="training" />
+      <JobsList search={search} />
     </Layout>
   );
 }

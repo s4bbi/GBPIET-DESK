@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../../components/layouts/StudentLayout";
-import JobsList from "../../components/common/JobsList";
+import JobsList from "../../components/common/InternshipsList";
 
 export default function InternshipsPage() {
   const [search, setSearch] = useState("");
@@ -19,7 +19,7 @@ export default function InternshipsPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      <JobsList search={search} filterByType="internship" />
+      <JobsList search={search} />
     </Layout>
   );
 }

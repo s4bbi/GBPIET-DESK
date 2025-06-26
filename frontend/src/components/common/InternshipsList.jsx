@@ -21,7 +21,11 @@ export default function InternshipsList({ search = "" }) {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        setInternships(res.data?.data || []);
+        // Just in case, ensure filtering type === "internship"
+        const internshipData = (res.data?.data || []).filter(
+          (item) => item.type === "internship"
+        );
+        setInternships(internshipData);
       } catch (err) {
         if (err.response?.status === 401) {
           toast.error("Session expired. Please login again.");

@@ -69,7 +69,7 @@ export default function JobCard() {
             </div>
             {/* Apply Button */}
             <button className="w-full sm:w-auto bg-gradient-to-b from-[#3C89C9] to-[#235782] text-white px-6 py-2 rounded-3xl flex items-center justify-center gap-1 hover:bg-blue-700 transition font-sL mt-2 sm:mt-0">
-              Apply
+              View
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
