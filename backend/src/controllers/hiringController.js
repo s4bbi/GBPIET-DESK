@@ -68,7 +68,7 @@ async function getHiringPosts(req, res, next) {
     // const role = req.user?.role;
     // const department = req.user?.department;
 
-    const query = { ...req.query };
+    // const query = { ...req.query };
 
     // if (role === "student" && all !== "true" && !req.query.departments) {
     //   query.departments = department;
