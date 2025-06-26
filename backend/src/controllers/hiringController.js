@@ -65,9 +65,9 @@ async function getHiringPosts(req, res, next) {
 
     const query = { ...req.query };
 
-    if (role === "student" && all !== "true" && !req.query.departments) {
-      query.departments = department;
-    }
+    // if (role === "student" && all !== "true" && !req.query.departments) {
+    //   query.departments = department;
+    // }
 
     const posts = await HiringService.getAllHiring(query);
     return res.status(StatusCodes.OK).json({
