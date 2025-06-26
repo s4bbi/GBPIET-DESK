@@ -59,15 +59,16 @@ async function deletePost(req, res, next) {
 
 async function getHiringPosts(req, res, next) {
   try {
-    const { all } = req.query;
-    const role = req.user?.role;
-    const department = req.user?.department;
+    // const { all } = req.query;
+    // const role = req.user?.role;
+    // const department = req.user?.department;
 
-    const query = { ...req.query };
+    // const query = { ...req.query };
 
-    if (role === "student" && all !== "true" && !req.query.departments) {
-      query.departments = department;
-    }
+    // if (role === "student" && all !== "true" && !req.query.departments) {
+    //   query.departments = department;
+    // }
+    const query={...req.query}
 
     const posts = await HiringService.getAllHiring(query);
     return res.status(StatusCodes.OK).json({
