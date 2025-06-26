@@ -17,7 +17,7 @@ export default function JobsList({ search = "" }) {
   useEffect(() => {
     async function fetchJobs() {
       try {
-        const res = await axios.get("http://localhost:3001/api/v1/hiring", {
+        const res = await axios.get("http://localhost:3001/api/v1/hiring/getopp", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -63,6 +63,8 @@ export default function JobsList({ search = "" }) {
   const handleViewJob = (job) => {
     navigate("/description", { state: { job } });
   };
+
+  console.log("Visible Jobs:", visibleJobs);
 
   return (
     <div className="w-full">
