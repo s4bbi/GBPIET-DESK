@@ -39,6 +39,7 @@ export default function AdminList() {
       try {
         const userData = JSON.parse(localStorage.getItem("user"));
         setCurrentUser(userData);
+        console.log("userData: " + userData);
         setIsSuperAdmin(userData?.role === "superadmin");
       } catch (error) {
         console.error("Error parsing user data:", error);
