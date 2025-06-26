@@ -32,7 +32,7 @@ router.get(
 router.get("/:id", AuthMiddleware.isLoggedIn, HiringController.getHiring);
 
 router.delete(
-  "/:id",
+  "/:type/:id",
   AuthMiddleware.isLoggedIn,
   AuthMiddleware.requireAdmin,
   HiringController.deletePost

@@ -60,7 +60,7 @@ export default function JobsList({ search = "" }) {
 
     const handleDelete = async (id) => {
         try {
-          await axios.delete(`http://localhost:3001/api/v1/hiring/${id}`, {
+          await axios.delete(`http://localhost:3001/api/v1/hiring/job/${id}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
