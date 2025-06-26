@@ -24,9 +24,7 @@ export default function StudentDashboard() {
           <div className="bg-white rounded-xl shadow p-4 md:p-8">
             <h2 className="text-lg md:text-2xl font-sB mb-4 md:mb-6">Latest Job Openings</h2>
             <div className="flex flex-col gap-3 md:gap-4 max-h-80 overflow-y-auto">
-              {jobs.map((job, i) => (
-                <JobCard key={i} {...job} />
-              ))}
+              <JobCard />
             </div>
           </div>
         </div>
