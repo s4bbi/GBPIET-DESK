@@ -17,7 +17,7 @@ async function createHiring(req, res, next) {
     } = req.body;
 
     // Optionally validate again or log
-    console.log("Creating hiring post with data:", req.body);
+    // console.log("Creating hiring post with data:", req.body);
 
     const post = await HiringService.createHiring({
       companyName,
@@ -42,7 +42,6 @@ async function createHiring(req, res, next) {
     next(error);
   }
 }
-
 
 async function deletePost(req, res, next) {
   try {
@@ -80,9 +79,53 @@ async function getHiringPosts(req, res, next) {
     next(error);
   }
 }
+async function getHiring(req, res, next) {
+  try {
+    const postId = req.params.id;
+    const post = await HiringService.getHiring(postId);
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Hiring post fetched successfully",
+      data: post,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+async function getPostByType(req, res, next) {
+  try {
+    const { type } = req.params;
+    const posts = await HiringService.getHiringByType(type);
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Hiring posts fetched successfully",
+      data: posts,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+// controllers/hiringController.js
+async function getLatestPosts(req, res, next) {
+  try {
+    const { limit } = req.query;
+    const posts = await HiringService.getLatestHiringPosts(limit); // can make this dynamic
+    console.log("Latest posts fetched:", posts.length);
+    return res.status(200).json({
+      success: true,
+      message: "Latest hiring posts fetched successfully",
+      data: posts,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 module.exports = {
   createHiring,
   getHiringPosts,
   deletePost,
+  getHiring,
+  getPostByType,
+  getLatestPosts,
 };
