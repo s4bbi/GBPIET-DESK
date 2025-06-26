@@ -1,68 +1,72 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
 import Layout from "../../components/layouts/StudentLayout";
+import JobsList from "../../components/common/JobsList";
 
-export default function JobDescription() {
-  const { id } = useParams(); // Get job ID from route
-  const [job, setJob] = useState(null);
+import { FaGraduationCap } from "react-icons/fa";
+import { FiLogOut } from "react-icons/fi";
 
-  useEffect(() => {
-    const fetchJob = async () => {
-      try {
-        const res = await fetch(`http://localhost:3001/api/v1/hiring/`);
-        const data = await res.json();
-        if (res.ok) {
-          setJob(data.data); // assuming your response is { success, data }
-        } else {
-          console.error(data.message);
-        }
-      } catch (error) {
-        console.error("Failed to fetch job:", error);
-      }
-    };
+export default function JobsDescription() {
+  const [search, setSearch] = useState("");
 
-    fetchJob();
-  }, [id]);
-
-  if (!job) return <Layout active="Jobs"><div className="p-6">Loading...</div></Layout>;
+  const handleViewJob = (job) => {
+    alert(`Viewing job at ${job.company}: ${job.role}`);
+  };
 
   return (
     <Layout active="Jobs">
-      <div className="p-6 space-y-6">
-        {/* Title */}
-        <div className="border-b pb-4">
-          <h2 className="text-2xl font-bold text-gray-800">{job.companyName}</h2>
-          <p className="text-gray-600">
-            <span className="font-medium">{job.role}</span> - Remote • {job.type} • {new Date(job.createdAt).toLocaleDateString()}
+      <div className="flex justify-end mb-5">
+        <input
+          type="text"
+          placeholder="Search jobs..."
+          className="border rounded-full px-4 py-2 w-full sm:w-64"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+      </div>
+      yoikhkbjk
+
+      <div className="">
+      <div className="flex-1 p-10 space-y-6 overflow-auto">
+
+        <div>
+          <h2 className="text-xl font-semibold">Microsoft
+            Data Analyst - Remote • Full Time • 27th May
+          </h2>
+        </div>
+
+        <div className="p-6 rounded-md">
+          <p><span>Duration:</span> 6 Months</p>
+          <p><span>Location:</span> remote</p>
+          <p>
+            <span>eligibility:</span> Sttrong economics, or related fields
           </p>
-          <div className="mt-2">
-            <button className="bg-blue-600 text-white px-5 py-1.5 rounded-full text-sm hover:bg-blue-700 transition">
-              Apply ↗
-            </button>
+          <p><span>experience:</span> fresher</p>
+          <p><span>stipend:</span> ₹1200</p>
+
+          <div>
+            <h3 className="text-lg font-semibold mt-4 mb-2">Job desc</h3>
+            <ul className="list-disc list-inside space-y-1 text-gray-700">
+              <li>data handling: sources.</li>
+              <li>analysis: perform data.</li>
+              <li>visualization: support.</li>
+              <li>reporting: utilize ms.</li>
+              <li>query execution: write.</li>
+            </ul>
           </div>
-        </div>
 
-        {/* Details */}
-        <div className="space-y-3 text-gray-700 text-sm leading-relaxed">
-          <p><strong>Deadline:</strong> {new Date(job.lastDate).toDateString()}</p>
-          <p><strong>Location:</strong> {job.location}</p>
-          <p><strong>Eligibility:</strong> {job.eligibility}</p>
-          <p><strong>For Batch:</strong> {job.batch}</p>
-          <p><strong>For Department:</strong> {job.departments?.join(", ")}</p>
-        </div>
+          <div>
+            <h3 className="text-lg font-semibold mt-4 mb-2">qualifications</h3>
+            <ul className="list-disc list-inside space-y-1 text-gray-700">
+              <li>education: fields</li>
+              <li>skills: proficiency in sql</li>
+              <li>soft skills: strong</li>
+            </ul>
+          </div>
 
-        {/* Job Description */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Job Description</h3>
-          <p className="text-gray-700 whitespace-pre-line text-sm">{job.description}</p>
-        </div>
-
-        {/* Qualifications */}
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">Qualifications</h3>
-          <p className="text-gray-700 whitespace-pre-line text-sm">{job.qualifications}</p>
         </div>
       </div>
+    </div>
+      
     </Layout>
   );
 }
