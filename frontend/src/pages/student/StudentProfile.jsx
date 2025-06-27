@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import StudentLayout from "../../components/layouts/StudentLayout";
 import { HiOutlineAcademicCap, HiPencilAlt } from "react-icons/hi";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Loader from "../../components/common/Loader"; // 👈 Import your loader
 
 export default function ProfilePage() {
   const [user, setUser] = useState({
@@ -21,11 +21,14 @@ export default function ProfilePage() {
 
   const [editMode, setEditMode] = useState(false);
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // 👈 loader state
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
       fetchUserFromBackend(storedUser._id);
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
@@ -40,6 +43,8 @@ export default function ProfilePage() {
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch profile");
+    } finally {
+      setIsLoading(false); // 👈 stop loader
     }
   };
 
@@ -58,16 +63,19 @@ export default function ProfilePage() {
       formData.append("cgpa", user.cgpa);
 
       const achievementsArray = typeof user.achievements === "string"
-        ? user.achievements.split(",").map((s) => s.trim()).filter(Boolean)
+        ? user.achievements.split(",").map(s => s.trim()).filter(s => s)
         : user.achievements;
 
       const skillsArray = typeof user.skills === "string"
-        ? user.skills.split(",").map((s) => s.trim()).filter(Boolean)
+        ? user.skills.split(",").map(s => s.trim()).filter(s => s)
         : user.skills;
 
       formData.append("achievements", JSON.stringify(achievementsArray));
       formData.append("skills", JSON.stringify(skillsArray));
-      if (file) formData.append("resume", file);
+
+      if (file) {
+        formData.append("resume", file);
+      }
 
       const token = localStorage.getItem("token");
       const res = await axios.put(
@@ -89,7 +97,10 @@ export default function ProfilePage() {
       console.error(err);
       toast.error("Failed to update profile");
     }
-  };
+  }
+  ;
+
+  if (isLoading) return <div className="flex justify-center mt-20"><Loader /></div>; // 👈 Loader while fetching
 
   return (
     <StudentLayout>
