@@ -6,7 +6,6 @@ import ProfileActions from "../../components/student/ProfileActions";
 import ProfileCompletion from "../../components/student/ProfileCompletion";
 
 export default function StudentDashboard() {
-  // ✅ Get user data from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
 
   return (

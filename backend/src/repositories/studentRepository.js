@@ -73,6 +73,7 @@ async getBranchStats() {
       },
     ]);
   }
+
 }
 
 module.exports = StudentRepository;

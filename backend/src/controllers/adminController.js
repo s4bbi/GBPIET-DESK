@@ -101,6 +101,15 @@ async function getBranchStats(req,res,next){
   }
 
 }
+
+async function getWeeklySignups(req, res,next)  {
+  try {
+    const data = await AdminService.getWeekAnalysis();
+    return res.status(200).json(data);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching signup data" });
+  }
+};
 module.exports = {
   createAdmin,
   signIn,
@@ -108,5 +117,6 @@ module.exports = {
   getAllAdmins,
   getStats,
   getAllStudents,
-  getBranchStats
+  getBranchStats,
+  getWeeklySignups
 };
