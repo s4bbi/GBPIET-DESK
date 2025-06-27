@@ -97,7 +97,8 @@ export default function TrainingsList({ search = "" }) {
   const visibleTrainings = filteredTrainings.slice(startIndex, startIndex + TRAININGS_PER_PAGE);
 
   const handleViewTraining = (training) => {
-    navigate("/description", { state: { job: training } }); // Same description page reused
+    navigate("/description", { state: { job: training } });
+    console.log("training: " + training )
   };
 
   return (
