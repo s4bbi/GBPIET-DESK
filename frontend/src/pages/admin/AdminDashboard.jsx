@@ -77,7 +77,7 @@ export default function AdminDashboard() {
 
   return (
     <Layout active="Dashboard">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-sB mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-sB mb-6 -mt-6">
         <StatsCard
           title="Total Students Enrolled"
           count={stats.totalStudents}
