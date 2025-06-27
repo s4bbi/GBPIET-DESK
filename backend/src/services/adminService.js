@@ -22,7 +22,15 @@ function handleValidationError(error) {
   }
   throw error;
 }
-
+async function getWeekAnalysis(){
+  try{
+    const data=await adminRepository.getUserSignupsPerDayThisWeek();
+    return data;
+  }
+  catch(error){
+    throw error;
+  }
+}
 async function createAdmin(adminData) {
   try {
     const existingAdmin = await adminRepository.findByEmail(adminData.email);
@@ -129,5 +137,6 @@ module.exports = {
   deleteAdmin,
   getAllAdmins,
   getStats,
-  getBranchStats
+  getBranchStats,
+  getWeekAnalysis
 };

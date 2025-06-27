@@ -75,12 +75,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const logs = [
-    { message: "Ayush Joshi added a new job post.", time: "07:23 AM" },
-    { message: "Yashpreet Singh removed an admin", time: "05:41 PM" },
-    { message: "24 more students enrolled yesterday!", time: "Yesterday" },
-  ];
-
   return (
     <Layout active="Dashboard">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-sB mb-6">

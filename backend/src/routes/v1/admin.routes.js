@@ -10,7 +10,9 @@ router.post(
   AuthMiddleware.requireSuperadmin,
   AdminController.createAdmin
 );
-
+router.get('/week',AuthMiddleware.isLoggedIn,
+  AdminController.getWeeklySignups
+)
 router.post(
   "/login",
   UserMiddleware.validateUser(["email", "password"]),
