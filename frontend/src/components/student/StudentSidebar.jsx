@@ -33,6 +33,7 @@ export default function StudentSidebar() {
       to: "/dashboard"
     },
     {
+      
       label: "Jobs",
       icon: <HiOutlineBriefcase size={22} />,
       to: "/jobs"

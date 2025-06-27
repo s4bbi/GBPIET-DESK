@@ -1,10 +1,10 @@
-
 import React, { useEffect, useState } from "react";
 import StudentLayout from '../../components/layouts/StudentLayout';
 import { HiOutlineAcademicCap } from "react-icons/hi";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Loader from "../../components/common/Loader"; // 👈 Import your loader
 
 export default function ProfilePage() {
   const [user, setUser] = useState({
@@ -21,11 +21,14 @@ export default function ProfilePage() {
 
   const [editMode, setEditMode] = useState(false);
   const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // 👈 loader state
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
       fetchUserFromBackend(storedUser._id);
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
@@ -39,6 +42,8 @@ export default function ProfilePage() {
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch profile");
+    } finally {
+      setIsLoading(false); // 👈 stop loader
     }
   };
 
@@ -51,48 +56,49 @@ export default function ProfilePage() {
     setFile(e.target.files[0]);
   };
 
-const handleSave = async () => {
-  try {
-    const formData = new FormData();
-    formData.append("cgpa", user.cgpa);
+  const handleSave = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("cgpa", user.cgpa);
 
-    // Split only at save time
-    const achievementsArray = typeof user.achievements === "string"
-      ? user.achievements.split(",").map(s => s.trim()).filter(s => s)
-      : user.achievements;
+      const achievementsArray = typeof user.achievements === "string"
+        ? user.achievements.split(",").map(s => s.trim()).filter(s => s)
+        : user.achievements;
 
-    const skillsArray = typeof user.skills === "string"
-      ? user.skills.split(",").map(s => s.trim()).filter(s => s)
-      : user.skills;
+      const skillsArray = typeof user.skills === "string"
+        ? user.skills.split(",").map(s => s.trim()).filter(s => s)
+        : user.skills;
 
-    formData.append("achievements", JSON.stringify(achievementsArray));
-    formData.append("skills", JSON.stringify(skillsArray));
+      formData.append("achievements", JSON.stringify(achievementsArray));
+      formData.append("skills", JSON.stringify(skillsArray));
 
-    if (file) {
-      formData.append("resume", file);
-    }
-
-    const token = localStorage.getItem("token");
-    const res = await axios.put(
-      `http://localhost:3001/api/v1/students/profile/${user._id}`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
+      if (file) {
+        formData.append("resume", file);
       }
-    );
 
-    setUser(res.data.data);
-    setEditMode(false);
-    setFile(null);
-    toast.success("Profile updated successfully!");
-  } catch (err) {
-    console.error(err);
-    toast.error("Failed to update profile");
-  }
-};
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        `http://localhost:3001/api/v1/students/profile/${user._id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setUser(res.data.data);
+      setEditMode(false);
+      setFile(null);
+      toast.success("Profile updated successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update profile");
+    }
+  };
+
+  if (isLoading) return <div className="flex justify-center mt-20"><Loader /></div>; // 👈 Loader while fetching
 
   return (
     <StudentLayout>
@@ -204,3 +210,4 @@ function ProfileField({ label, value, name, editable, onChange }) {
     </div>
   );
 }
+  
