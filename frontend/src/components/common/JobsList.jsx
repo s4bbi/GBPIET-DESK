@@ -96,8 +96,8 @@ export default function JobsList({ search = "" }) {
 
 
   const handleViewJob = (job) => {
-    navigate("/description", { state: { job } });
     console.log(job);
+    navigate("/description", { state: { job } });
   };
 
   // console.log("Visible Jobs:", visibleJobs);

@@ -36,6 +36,9 @@ const hiringPostSchema = new mongoose.Schema(
       type: String,
       required: [true, "Stipend is required"],
     },
+    duration: {
+      type: String,
+    },
     eligibility: {
       type: String,
       required: [true, "Eligibility is required"],

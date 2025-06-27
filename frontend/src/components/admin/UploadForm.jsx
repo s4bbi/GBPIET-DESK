@@ -12,6 +12,7 @@ export default function UploadForm({ type }) {
     batch: [],
     branch: [],
     stipend: "",
+    duration: "", // NEW FIELD
     opportunityLink: "",
     description: "",
     qualifications: "",
@@ -68,6 +69,7 @@ export default function UploadForm({ type }) {
       lastDate: formData.deadline,
       eligibility: formData.eligibility,
       stipend: formData.stipend,
+      duration: formData.duration, // INCLUDED IN PAYLOAD
       opportunityLink: formData.opportunityLink,
       batch: formData.batch,
       departments: formData.branch,
@@ -100,6 +102,7 @@ export default function UploadForm({ type }) {
           batch: [],
           branch: [],
           stipend: "",
+          duration: "",
           opportunityLink: "",
           description: "",
           qualifications: "",
@@ -131,34 +134,43 @@ export default function UploadForm({ type }) {
         </div>
 
         {/* Location and Deadline */}
-        <div className="w-full">
+        <div>
           <label>Location</label>
           <input name="location" value={formData.location} onChange={handleChange} type="text"
             placeholder="e.g., Remote / On-site / Hybrid"
             className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
         </div>
 
-        <div className="w-full">
+        <div>
           <label>Deadline</label>
           <input name="deadline" value={formData.deadline} onChange={handleChange} type="date"
             className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
         </div>
 
-        {/* Eligibility and Stipend */}
+        {/* Eligibility */}
         <div>
           <label>Eligibility</label>
           <input name="eligibility" value={formData.eligibility} onChange={handleChange} type="text"
             className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
         </div>
 
-        <div>
-          <label>Stipend</label>
-          <input name="stipend" value={formData.stipend} onChange={handleChange} type="text"
-            placeholder="e.g., ₹10,000/month"
-            className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
+        {/* Stipend and Duration side-by-side */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label>Stipend</label>
+            <input name="stipend" value={formData.stipend} onChange={handleChange} type="text"
+              placeholder="e.g., ₹10,000/month"
+              className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
+          </div>
+          <div>
+            <label>Duration</label>
+            <input name="duration" value={formData.duration} onChange={handleChange} type="text"
+              placeholder="e.g., 6 Months"
+              className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
+          </div>
         </div>
 
-        {/* Apply Link */}
+        {/* Opportunity Link */}
         <div className="md:col-span-2">
           <label>Opportunity Apply Link</label>
           <input name="opportunityLink" value={formData.opportunityLink} onChange={handleChange} type="url"
@@ -166,7 +178,7 @@ export default function UploadForm({ type }) {
             className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
         </div>
 
-        {/* Batch Selection */}
+        {/* Batch Dropdown */}
         <div className="w-full relative" ref={batchRef}>
           <label>For Batch</label>
           <div className="border border-[#9A9A9A] rounded-xl mt-1 p-2 cursor-pointer"
@@ -192,7 +204,7 @@ export default function UploadForm({ type }) {
           )}
         </div>
 
-        {/* Branch Multi-Select */}
+        {/* Branch Dropdown */}
         <div className="w-full relative" ref={branchRef}>
           <label>For Branch</label>
           <div className="border border-[#9A9A9A] rounded-xl mt-1 p-2 cursor-pointer"

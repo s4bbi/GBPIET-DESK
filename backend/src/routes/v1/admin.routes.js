@@ -40,5 +40,10 @@ router.get('/students',
 //   AuthMiddleware.requireSuperadmin,
 //   AdminController.getAllAdmins
 // );
-
+router.get(
+  "/students/branch-stats",
+  AuthMiddleware.isLoggedIn,
+  // AuthMiddleware.requireAdmin,
+  AdminController.getBranchStats
+);
 module.exports = router;
