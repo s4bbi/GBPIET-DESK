@@ -110,6 +110,7 @@ export default function JobsList({ search = "" }) {
   );
 
   const handleViewJob = (job) => {
+    console.log(job);
     navigate("/description", { state: { job } });
   };
 

@@ -90,11 +90,23 @@ async function getAllStudents(req, res, next) {
     next(error);
   }
 }
+async function getBranchStats(req,res,next){
+  try {
+    const data = await AdminService.getBranchStats();
+    res.status(200).json({ data });
+  } catch (error) {
+    next(error);
+    console.error("Error in getBranchStats:", error);
+    res.status(500).json({ message: "Failed to fetch branch statistics" });
+  }
+
+}
 module.exports = {
   createAdmin,
   signIn,
   deleteAdmin,
   getAllAdmins,
   getStats,
-  getAllStudents
+  getAllStudents,
+  getBranchStats
 };

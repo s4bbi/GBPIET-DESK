@@ -10,6 +10,7 @@ import AdminList from "../../components/admin/AdminList";
 import Layout from "../../components/layouts/AdminLayout";
 import ActivityLog from "../../components/admin/ActivityLog";
 import LineChart from "../../components/admin/LineChart";
+import BranchPieChart from "../../components/admin/BranchPieChart";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -102,7 +103,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <AdminList admins={admins} onDelete={handleDelete} loading={loading} />
-        <ActivityLog logs={logs} />
+        <BranchPieChart />
       </div>
 
       <div className="mt-6">

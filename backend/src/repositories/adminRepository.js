@@ -39,6 +39,7 @@ class AdminRepository extends CrudRepository {
       throw error;
     }
   }
+  
 }
 
 module.exports = AdminRepository;
