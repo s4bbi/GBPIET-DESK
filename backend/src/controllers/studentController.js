@@ -53,16 +53,13 @@ const parseIfStringifiedArray = (input) => {
 const updateStudentProfile = async (req, res, next) => {
   try {
     const studentId = req.user.id;
-    let updateData = { ...req.body };
+    const updateData = {
+      ...req.body,
+      skills: JSON.parse(req.body.skills || "[]"),
+      achievements: JSON.parse(req.body.achievements || "[]"),
+    };
 
-    updateData.skills = parseIfStringifiedArray(updateData.skills);
-    updateData.achievements = parseIfStringifiedArray(updateData.achievements);
-
-    const updatedStudent = await StudentService.updateStudentProfile(
-      studentId,
-      updateData,
-      req.file // pass uploaded resume file
-    );
+    const updatedStudent = await StudentService.updateStudentProfile(studentId, updateData, req.file); // 👈 Pass file here
 
     res.status(200).json({
       success: true,
@@ -70,9 +67,11 @@ const updateStudentProfile = async (req, res, next) => {
       data: updatedStudent,
     });
   } catch (error) {
+    console.error("Profile update failed:", error); // 👈 Add logging
     next(error);
   }
 };
+
 
 const forgorPassword = async (req, res, next) => {
   try {

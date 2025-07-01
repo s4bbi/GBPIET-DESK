@@ -1,8 +1,8 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 const { StudentController } = require("../../controllers");
-const { UserMiddleware, AuthMiddleware } = require("../../middlewares");
-const upload = require("../../utils/cloudinaryUploader.js");
+const { AuthMiddleware, UserMiddleware } = require("../../middlewares");
+const upload = require("../../utils/multer"); 
 
 const validateStudentId = (req, res, next) => {
   if (!req.params.id || req.params.id.length < 12) {
@@ -19,7 +19,7 @@ router.get("/profile/:id", AuthMiddleware.isLoggedIn, validateStudentId, Student
 router.put(
   "/profile/:id",
   AuthMiddleware.isLoggedIn,
-  upload.single("resume"),
+  upload.single("resume"),  // now .single() works
   StudentController.updateStudentProfile
 );
 

@@ -1,20 +1,13 @@
 const multer = require("multer");
 const path = require("path");
-const fs = require("fs");
-
-// Ensure directory exists or create it
-const resumePath = path.join(__dirname, "../uploads/resumes");
-if (!fs.existsSync(resumePath)) {
-  fs.mkdirSync(resumePath, { recursive: true });
-}
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, resumePath);
+    cb(null, path.join(__dirname, "../uploads/temp")); // make sure folder exists
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
-    const filename = `${Date.now()}-${file.fieldname}${ext}`;
+    const filename = `${Date.now()}-${file.originalname}`;
     cb(null, filename);
   },
 });
@@ -28,4 +21,5 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({ storage, fileFilter });
+
 module.exports = upload;
