@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { HiOutlineArrowRight } from "react-icons/hi";
-import axios from "axios";
-import Pagination from "../common/Pagination";
-import { useNavigate } from "react-router-dom";
 import { FiTrash2 } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loader from "../common/Loader"; // ✅ your spinner component
+
+import api from "../../api"; // ✅ Centralized axios instance
+import Pagination from "../common/Pagination";
+import Loader from "../common/Loader";
+import { useNavigate } from "react-router-dom";
 
 const INTERNSHIPS_PER_PAGE = 8;
 
@@ -17,17 +18,14 @@ export default function InternshipsList({ search = "" }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchInternships() {
-      setIsLoading(true); // Start loader
+      setIsLoading(true);
       try {
-        const res = await axios.get("http://localhost:3001/api/v1/hiring/type/internship", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const res = await api.get("/api/v1/hiring/type/internship");
         const internshipData = (res.data?.data || []).filter(
           (item) => item.type === "internship"
         );
@@ -42,7 +40,7 @@ export default function InternshipsList({ search = "" }) {
           console.error("Error fetching internships:", err);
         }
       } finally {
-        setIsLoading(false); // Stop loader
+        setIsLoading(false);
       }
     }
 
@@ -71,26 +69,18 @@ export default function InternshipsList({ search = "" }) {
   }, [search, internships]);
 
   useEffect(() => {
-    const getUserData = () => {
-      try {
-        const userData = JSON.parse(localStorage.getItem("user"));
-        setCurrentUser(userData);
-        setIsAdmin(userData?.role === "superadmin" || userData?.role === "admin");
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
-    };
-
-    getUserData();
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      setCurrentUser(userData);
+      setIsAdmin(userData?.role === "admin" || userData?.role === "superadmin");
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+    }
   }, []);
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3001/api/v1/hiring/internship/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await api.delete(`/api/v1/hiring/internship/${id}`);
       setInternships((prev) => prev.filter((job) => job._id !== id));
       toast.success("Internship deleted");
     } catch (error) {
@@ -123,6 +113,7 @@ export default function InternshipsList({ search = "" }) {
                     month: "short",
                     year: "numeric",
                   });
+
                   return (
                     <div
                       key={job._id || idx}
@@ -140,7 +131,8 @@ export default function InternshipsList({ search = "" }) {
                         className="font-sL bg-[#3C89C9] hover:bg-[#235782] text-white px-4 py-1.5 rounded text-xs sm:text-sm transition duration-150 shadow"
                         onClick={() => handleViewInternship(job)}
                       >
-                        View <HiOutlineArrowRight className="inline-block ml-1 -mr-1" size={16} />
+                        View{" "}
+                        <HiOutlineArrowRight className="inline-block ml-1 -mr-1" size={16} />
                       </button>
 
                       {isAdmin && (
@@ -155,9 +147,7 @@ export default function InternshipsList({ search = "" }) {
                   );
                 })
               ) : (
-                <div className="py-10 px-3 text-center text-gray-400">
-                  No internships found.
-                </div>
+                <div className="py-10 px-3 text-center text-gray-400">No internships found.</div>
               )}
             </div>
           </div>

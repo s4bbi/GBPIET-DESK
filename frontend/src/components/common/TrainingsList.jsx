@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { HiOutlineArrowRight } from "react-icons/hi";
-import axios from "axios";
-import Pagination from "../common/Pagination";
 import { FiTrash2 } from "react-icons/fi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loader from "../common/Loader"; // ✅ Import Loader
+
+import Pagination from "../common/Pagination";
+import Loader from "../common/Loader";
+import api from "../../api"; // ✅ Centralized Axios instance
 
 const TRAININGS_PER_PAGE = 8;
 
@@ -16,18 +17,14 @@ export default function TrainingsList({ search = "" }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(false); // ✅ Loader state
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchTrainings() {
-      setIsLoading(true); // ✅ Start loader
+      setIsLoading(true);
       try {
-        const res = await axios.get("http://localhost:3001/api/v1/hiring/type/training", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const res = await api.get("/api/v1/hiring/type/training");
         setTrainings(res.data?.data || []);
       } catch (err) {
         if (err.response?.status === 401) {
@@ -39,7 +36,7 @@ export default function TrainingsList({ search = "" }) {
           console.error("Error fetching trainings:", err);
         }
       } finally {
-        setIsLoading(false); // ✅ Stop loader
+        setIsLoading(false);
       }
     }
 
@@ -68,31 +65,23 @@ export default function TrainingsList({ search = "" }) {
   }, [search, trainings]);
 
   useEffect(() => {
-    const getUserData = () => {
-      try {
-        const userData = JSON.parse(localStorage.getItem("user"));
-        setCurrentUser(userData);
-        setIsAdmin(userData?.role === "superadmin" || userData?.role === "admin");
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-      }
-    };
-
-    getUserData();
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      setCurrentUser(userData);
+      setIsAdmin(userData?.role === "superadmin" || userData?.role === "admin");
+    } catch (error) {
+      console.error("Error parsing user data:", error);
+    }
   }, []);
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3001/api/v1/hiring/training/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      setTrainings((prev) => prev.filter((job) => job._id !== id));
+      await api.delete(`/api/v1/hiring/training/${id}`);
+      setTrainings((prev) => prev.filter((t) => t._id !== id));
       toast.success("Training deleted");
     } catch (error) {
-      console.error("Error deleting Training:", error);
-      toast.error("Failed to delete Training");
+      console.error("Error deleting training:", error);
+      toast.error("Failed to delete training");
     }
   };
 
@@ -109,7 +98,7 @@ export default function TrainingsList({ search = "" }) {
       <ToastContainer />
 
       {isLoading ? (
-        <Loader /> // ✅ Render Loader here
+        <Loader />
       ) : (
         <>
           <div className="overflow-x-auto rounded shadow-sm border border-gray-200 bg-white w-full">
@@ -141,6 +130,7 @@ export default function TrainingsList({ search = "" }) {
                       >
                         View <HiOutlineArrowRight className="inline-block ml-1 -mr-1" size={16} />
                       </button>
+
                       {isAdmin && (
                         <button
                           onClick={() => handleDelete(training._id)}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   HiOutlineUserGroup,
   HiOutlineBriefcase,
@@ -10,7 +9,8 @@ import AdminList from "../../components/admin/AdminList";
 import Layout from "../../components/layouts/AdminLayout";
 import LineChart from "../../components/admin/LineChart";
 import BranchPieChart from "../../components/admin/BranchPieChart";
-  
+import api from "../../api"; // ✅ Centralized Axios instance
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalStudents: 0,
@@ -24,19 +24,12 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchStats();
     fetchAdmins();
-  }, [stats]);
+  }, []); // ✅ Only run once on mount
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/api/v1/admin/stats",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setStats(response.data.data || {});
+      const res = await api.get("/api/v1/admin/stats");
+      setStats(res.data?.data || {});
     } catch (error) {
       console.error("Error fetching stats:", error);
     }
@@ -44,15 +37,8 @@ export default function AdminDashboard() {
 
   const fetchAdmins = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/api/v1/admin/all",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      setAdmins(response?.data?.data || []);
+      const res = await api.get("/api/v1/admin/all");
+      setAdmins(res.data?.data || []);
     } catch (error) {
       console.error("Error fetching admins:", error);
     } finally {
@@ -62,11 +48,7 @@ export default function AdminDashboard() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3001/api/v1/admin/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await api.delete(`/api/v1/admin/${id}`);
       setAdmins((prev) => prev.filter((admin) => admin._id !== id));
       setStats((prev) => ({ ...prev, totalAdmin: prev.totalAdmin - 1 }));
     } catch (error) {
@@ -76,6 +58,7 @@ export default function AdminDashboard() {
 
   return (
     <Layout active="Dashboard">
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-sB mb-6 -mt-6">
         <StatsCard
           title="Total Students Enrolled"
@@ -94,11 +77,13 @@ export default function AdminDashboard() {
         />
       </div>
 
+      {/* Admin List and Pie Chart */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <AdminList admins={admins} onDelete={handleDelete} loading={loading} />
         <BranchPieChart />
       </div>
 
+      {/* Line Chart */}
       <div className="mt-6">
         <LineChart />
       </div>

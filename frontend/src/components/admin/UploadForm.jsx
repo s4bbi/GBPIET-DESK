@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "../../api"; // ✅ Using centralized axios instance
 
 export default function UploadForm({ type }) {
   const [formData, setFormData] = useState({
@@ -12,7 +13,7 @@ export default function UploadForm({ type }) {
     batch: [],
     branch: [],
     stipend: "",
-    duration: "", // NEW FIELD
+    duration: "",
     opportunityLink: "",
     description: "",
     qualifications: "",
@@ -29,10 +30,7 @@ export default function UploadForm({ type }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   useEffect(() => {
@@ -51,13 +49,13 @@ export default function UploadForm({ type }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const requiredFields = Object.entries(formData);
-    for (let [field, value] of requiredFields) {
+    // Validate all fields
+    for (let [field, value] of Object.entries(formData)) {
       if (Array.isArray(value) && value.length === 0) {
-        toast.error(`Please select at least one ${field}`, { position: "top-right" });
+        toast.error(`Please select at least one ${field}`);
         return;
       } else if (typeof value === "string" && !value.trim()) {
-        toast.error(`Please fill in the ${field} field.`, { position: "top-right" });
+        toast.error(`Please fill in the ${field} field`);
         return;
       }
     }
@@ -69,7 +67,7 @@ export default function UploadForm({ type }) {
       lastDate: formData.deadline,
       eligibility: formData.eligibility,
       stipend: formData.stipend,
-      duration: formData.duration, // INCLUDED IN PAYLOAD
+      duration: formData.duration,
       opportunityLink: formData.opportunityLink,
       batch: formData.batch,
       departments: formData.branch,
@@ -78,21 +76,11 @@ export default function UploadForm({ type }) {
       type,
     };
 
-    console.log("Payload being sent:", payload);
-
     try {
-      const res = await fetch("http://localhost:3001/api/v1/hiring/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const res = await api.post("/api/v1/hiring/post", payload);
 
-      const result = await res.json();
-      if (res.ok) {
-        toast.success("Opportunity posted successfully!", { position: "top-right" });
+      if (res?.data?.success) {
+        toast.success("Opportunity posted successfully!");
         setFormData({
           company: "",
           role: "",
@@ -108,10 +96,12 @@ export default function UploadForm({ type }) {
           qualifications: "",
         });
       } else {
-        toast.error(result.message || "Something went wrong", { position: "top-right" });
+        toast.error(res?.data?.message || "Something went wrong");
       }
     } catch (err) {
-      toast.error("Server error. Please try again later.", { position: "top-right" });
+      toast.error(
+        err?.response?.data?.message || "Server error. Please try again later."
+      );
       console.error("Submission error:", err);
     }
   };
@@ -126,7 +116,6 @@ export default function UploadForm({ type }) {
           <input name="company" value={formData.company} onChange={handleChange} type="text"
             className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
         </div>
-
         <div>
           <label>Role</label>
           <input name="role" value={formData.role} onChange={handleChange} type="text"
@@ -140,7 +129,6 @@ export default function UploadForm({ type }) {
             placeholder="e.g., Remote / On-site / Hybrid"
             className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
         </div>
-
         <div>
           <label>Deadline</label>
           <input name="deadline" value={formData.deadline} onChange={handleChange} type="date"
@@ -154,7 +142,7 @@ export default function UploadForm({ type }) {
             className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
         </div>
 
-        {/* Stipend and Duration side-by-side */}
+        {/* Stipend and Duration */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label>Stipend</label>
@@ -236,7 +224,6 @@ export default function UploadForm({ type }) {
           <textarea name="description" value={formData.description} onChange={handleChange} rows={5}
             className="w-full border border-[#9A9A9A] rounded-xl p-2 mt-1" />
         </div>
-
         <div className="md:col-span-1">
           <label>Qualifications</label>
           <textarea name="qualifications" value={formData.qualifications} onChange={handleChange} rows={5}
@@ -244,6 +231,7 @@ export default function UploadForm({ type }) {
         </div>
       </div>
 
+      {/* Submit */}
       <div className="flex justify-end mt-8 font-sR">
         <button type="submit"
           className="bg-gradient-to-b from-[#3C89C9] to-[#235782] text-white px-6 py-2 rounded-full shadow hover:opacity-90">

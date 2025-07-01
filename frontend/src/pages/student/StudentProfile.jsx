@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import StudentLayout from "../../components/layouts/StudentLayout";
 import { HiOutlineAcademicCap, HiPencilAlt } from "react-icons/hi";
-import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Loader from "../../components/common/Loader"; // 👈 Import your loader
+import Loader from "../../components/common/Loader";
+import api from "../../api"; // ✅ Import centralized Axios
 
 export default function ProfilePage() {
   const [user, setUser] = useState({
@@ -21,7 +21,7 @@ export default function ProfilePage() {
 
   const [editMode, setEditMode] = useState(false);
   const [file, setFile] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // 👈 loader state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -34,17 +34,13 @@ export default function ProfilePage() {
 
   const fetchUserFromBackend = async (id) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(
-        `http://localhost:3001/api/v1/students/profile/${id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await api.get(`/api/v1/students/profile/${id}`);
       setUser(res.data.data);
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch profile");
     } finally {
-      setIsLoading(false); // 👈 stop loader
+      setIsLoading(false);
     }
   };
 
@@ -63,11 +59,11 @@ export default function ProfilePage() {
       formData.append("cgpa", user.cgpa);
 
       const achievementsArray = typeof user.achievements === "string"
-        ? user.achievements.split(",").map(s => s.trim()).filter(s => s)
+        ? user.achievements.split(",").map(s => s.trim()).filter(Boolean)
         : user.achievements;
 
       const skillsArray = typeof user.skills === "string"
-        ? user.skills.split(",").map(s => s.trim()).filter(s => s)
+        ? user.skills.split(",").map(s => s.trim()).filter(Boolean)
         : user.skills;
 
       formData.append("achievements", JSON.stringify(achievementsArray));
@@ -77,16 +73,10 @@ export default function ProfilePage() {
         formData.append("resume", file);
       }
 
-      const token = localStorage.getItem("token");
-      const res = await axios.put(
-        `http://localhost:3001/api/v1/students/profile/${user._id}`,
+      const res = await api.put(
+        `/api/v1/students/profile/${user._id}`,
         formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: { "Content-Type": "multipart/form-data" } }
       );
 
       setUser(res.data.data);
@@ -97,10 +87,11 @@ export default function ProfilePage() {
       console.error(err);
       toast.error("Failed to update profile");
     }
-  }
-  ;
+  };
 
-  if (isLoading) return <div className="flex justify-center mt-20"><Loader /></div>; // 👈 Loader while fetching
+  if (isLoading) {
+    return <div className="flex justify-center mt-20"><Loader /></div>;
+  }
 
   return (
     <StudentLayout>
@@ -197,11 +188,11 @@ export default function ProfilePage() {
               <button
                 onClick={() => setEditMode(true)}
                 className="bg-[#235782] text-white px-6 py-2 rounded-xl hover:bg-[#1d476a] transition flex items-center gap-2 justify-center"
-                >
-                  <HiPencilAlt size={18} />
-                  Edit Profile
+              >
+                <HiPencilAlt size={18} />
+                Edit Profile
               </button>
-              )}
+            )}
           </div>
         </div>
 

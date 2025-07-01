@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import api from '../../api'; // ✅ use centralized API instance
 
 export default function ProfileCompletion() {
   const navigate = useNavigate();
@@ -18,11 +18,7 @@ export default function ProfileCompletion() {
 
   const fetchUserFromBackend = async (id) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:3001/api/v1/students/profile/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
+      const res = await api.get(`/api/v1/students/profile/${id}`);
       const fetchedUser = res.data.data;
       setUser(fetchedUser);
       calculateCompletion(fetchedUser);
@@ -85,7 +81,8 @@ export default function ProfileCompletion() {
 
       <button 
         onClick={() => navigate(`/profile/${user._id}`)}
-        className="px-4 py-2 bg-[#235782] text-white text-sm font-sB rounded hover:bg-[#1d476a] transition">
+        className="px-4 py-2 bg-[#235782] text-white text-sm font-sB rounded hover:bg-[#1d476a] transition"
+      >
         Complete Your Profile
       </button>
     </div>

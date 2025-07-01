@@ -1,7 +1,5 @@
-// ✅ Updated Signup.jsx with auto-login and dashboard redirect
 import React, { useState } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { HiChevronDown } from "react-icons/hi";
 import { toast, ToastContainer } from "react-toastify";
@@ -11,6 +9,7 @@ import collegelogo from "../../assets/images/collegelogowhiteV.svg";
 import ill1 from "../../assets/images/su_ill_1.svg";
 import { departments, batches } from "../../utils/data.js";
 import Loader from "../../components/common/Loader";
+import api from "../../api"; // ✅ Central Axios instance
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +24,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Added navigate hook
+  const navigate = useNavigate();
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -51,14 +50,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !formData.name ||
-      !formData.instituteId ||
-      !formData.email ||
-      !formData.password ||
-      !formData.department ||
-      !formData.batch
-    ) {
+    if (Object.values(formData).some((val) => val.trim() === "")) {
       toast.error("Please fill all fields.");
       return;
     }
@@ -68,54 +60,42 @@ const Signup = () => {
       return;
     }
 
-    const minimumLoadTime = new Promise((resolve) => setTimeout(resolve, 1200));
+    const delay = new Promise((resolve) => setTimeout(resolve, 1200));
     setIsLoading(true);
 
     try {
-      // First, sign up the user
-      const signupPromise = axios.post(
-        "http://localhost:3001/api/v1/students/signup",
-        formData
-      );
+      // ✅ Signup API call
+      const signupPromise = api.post("/api/v1/students/signup", formData);
+      const [signupRes] = await Promise.all([signupPromise, delay]);
 
-      const [signupRes] = await Promise.all([signupPromise, minimumLoadTime]);
-
-      // After successful signup, automatically log the user in
-      const loginRes = await axios.post(
-        "http://localhost:3001/api/v1/students/login",
-        {
-          email: formData.email,
-          password: formData.password
-        }
-      );
+      // ✅ Auto-login after signup
+      const loginRes = await api.post("/api/v1/students/login", {
+        email: formData.email,
+        password: formData.password,
+      });
 
       const loginData = loginRes.data;
-      
-      // Store token and user data
       localStorage.setItem("token", loginData.token);
       localStorage.setItem("user", JSON.stringify(loginData.data));
-      
+
       toast.success("Signup and login successful!");
-      navigate("/dashboard"); // Redirect to dashboard
-      
+      navigate("/dashboard");
     } catch (err) {
       console.error("Signup error:", err);
-      const errorMessage =
+      const message =
         err.response?.data?.message ||
         err.response?.data?.error?.message ||
-        "Failed to signup";
-      toast.error(errorMessage);
+        "Signup failed";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
   };
 
-
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row relative">
       <ToastContainer />
-
-      {isLoading && <Loader />} {/* Loader Component */}
+      {isLoading && <Loader />}
 
       {/* Left Side */}
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-[#235782] text-white p-6">
@@ -143,7 +123,6 @@ const Signup = () => {
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4 font-sR">
-            {/* Form Fields */}
             <div>
               <label className="block text-sm mb-1">Full Name</label>
               <input
@@ -151,7 +130,7 @@ const Signup = () => {
                 type="text"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
@@ -162,7 +141,7 @@ const Signup = () => {
                 type="text"
                 value={formData.instituteId}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
@@ -174,7 +153,7 @@ const Signup = () => {
                 value={formData.email}
                 onChange={handleChange}
                 autoComplete="username"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
 
@@ -186,16 +165,14 @@ const Signup = () => {
                 value={formData.password}
                 onChange={handleChange}
                 autoComplete="current-password"
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 pr-10 ${
+                className={`w-full px-4 py-2 border rounded-md pr-10 ${
                   passwordError ? "border-red-500" : "border-gray-300"
                 }`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-9 text-gray-500 hover:text-gray-700"
-                tabIndex={-1}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-4 top-9 text-gray-500"
               >
                 {showPassword ? (
                   <AiFillEyeInvisible size={20} />
@@ -215,7 +192,7 @@ const Signup = () => {
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="">Select Department</option>
                   {departments.map((dept, idx) => (
@@ -224,7 +201,7 @@ const Signup = () => {
                     </option>
                   ))}
                 </select>
-                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
+                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
               </div>
             </div>
 
@@ -235,7 +212,7 @@ const Signup = () => {
                   name="batch"
                   value={formData.batch}
                   onChange={handleChange}
-                  className="w-full appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md"
                 >
                   <option value="">Select Batch</option>
                   {batches.map((batch, idx) => (
@@ -244,14 +221,14 @@ const Signup = () => {
                     </option>
                   ))}
                 </select>
-                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
+                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
               </div>
             </div>
 
             <button
               type="submit"
               disabled={isLoading || !!passwordError}
-              className={`w-full py-2 rounded-md transition font-rR mt-2 ${
+              className={`w-full py-2 rounded-md mt-2 font-rR transition ${
                 isLoading || passwordError
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-[#3C89C9] hover:bg-[#15446f] text-white"
