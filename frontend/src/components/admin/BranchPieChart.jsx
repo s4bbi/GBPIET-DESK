@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
-import axios from "axios";
 import { toast } from "react-toastify";
 import {
   Chart as ChartJS,
@@ -9,6 +8,7 @@ import {
   Legend
 } from "chart.js";
 import { HiUserGroup } from "react-icons/hi";
+import api from "../../api.js"; // ✅ Use centralized API
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -23,11 +23,7 @@ export default function BranchPieChart() {
   useEffect(() => {
     async function fetchBranchStats() {
       try {
-        const res = await axios.get("http://localhost:3001/api/v1/admin/students/branch-stats", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const res = await api.get("/api/v1/admin/students/branch-stats");
 
         const data = res.data?.data || {};
         const branches = Object.keys(data);
@@ -56,45 +52,45 @@ export default function BranchPieChart() {
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-md w-full">
-        <h3 className="text-lg font-sB mb-4 text-gray-800 flex items-center justify-left gap-2">
-            <HiUserGroup className="text-[#3C89C9]" size={20} />
-            Student Distribution by Branch
-        </h3>
+      <h3 className="text-lg font-sB mb-4 text-gray-800 flex items-center justify-left gap-2">
+        <HiUserGroup className="text-[#3C89C9]" size={20} />
+        Student Distribution by Branch
+      </h3>
 
-        {chartData ? (
-            <div className="relative w-full h-[240px]">
-            <Pie
-                data={chartData}
-                options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                    position: "bottom",
-                    labels: {
-                        font: { size: 10 },
-                    },
-                    },
-                    tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                        const value = context.parsed;
-                        return `${value} Students`;
-                        },
-                    },
-                    },
+      {chartData ? (
+        <div className="relative w-full h-[240px]">
+          <Pie
+            data={chartData}
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: {
+                    font: { size: 10 },
+                  },
                 },
-                animation: {
-                    animateRotate: true,
-                    duration: 800,
-                    easing: "easeOutQuart"
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      const value = context.parsed;
+                      return `${value} Students`;
+                    },
+                  },
                 },
-                }}
-            />
-            </div>
-        ) : (
-            <div className="text-center text-gray-500 mt-10">Loading chart...</div>
-        )}
+              },
+              animation: {
+                animateRotate: true,
+                duration: 800,
+                easing: "easeOutQuart",
+              },
+            }}
+          />
+        </div>
+      ) : (
+        <div className="text-center text-gray-500 mt-10">Loading chart...</div>
+      )}
     </div>
   );
 }

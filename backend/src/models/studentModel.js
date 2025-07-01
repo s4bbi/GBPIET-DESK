@@ -7,12 +7,20 @@ const StudentSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required"],
     },
+        
     instituteId: {
-      // Added this field
-      type: String,
+      type: Number,
       required: [true, "Institute ID is required"],
       unique: true,
+      validate: {
+        validator: function (v) {
+          return /^\d{7}$/.test(String(v)); // Ensures exactly 6 digits
+        },
+        message: "Institute ID must be a 7-digit number",
+      },
     },
+
+
     email: {
       type: String,
       required: [true, "Email is required"],

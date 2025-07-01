@@ -6,43 +6,57 @@ const { ServerConfig } = require("./config");
 const errorHandler = require("./utils/errorHandler");
 const connectToDB = require("./config/dbConfig");
 const runExpiredPostCleanup = require("./utils/cronJob");
-const app = express();
 const path = require("path");
-const server = http.createServer(app);
-
 const cors = require("cors");
 
-const allowedOrigins = ["http://localhost:5173"]; // Change to your frontend URL
+const app = express();
+const server = http.createServer(app);
+
+// ✅ CORS Configuration
+const allowedOrigins = [
+  "http://localhost:5173",               // local frontend
+  "https://gbpiet-desk.vercel.app",      // deployed frontend
+];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = `CORS policy does not allow access from origin: ${origin}`;
-        return callback(new Error(msg), false);
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(
+          new Error(`CORS policy does not allow access from origin: ${origin}`),
+          false
+        );
       }
-      return callback(null, true);
     },
+    credentials: true, // ✅ Allow cookies, tokens, etc.
   })
 );
 
+// ✅ Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.text());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// ✅ Default Route
 app.get("/", (req, res) => {
-  res.send("API is running");
+  res.send("The Server is running!!");
 });
 
+// ✅ API Routes
 app.use("/api", apiRoutes);
+
+// ✅ Global Error Handler
 app.use(errorHandler);
 
+// ✅ Start Server
 async function startServer() {
   try {
     await connectToDB();
-    runExpiredPostCleanup();
+    runExpiredPostCleanup(); // Optional: your cron job
     server.listen(ServerConfig.PORT, () => {
       console.log(`🚀 Server listening on port ${ServerConfig.PORT}`);
     });
@@ -51,4 +65,5 @@ async function startServer() {
     process.exit(1);
   }
 }
+
 startServer();

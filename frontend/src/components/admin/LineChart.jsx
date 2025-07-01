@@ -10,7 +10,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import axios from "axios";
+import api from "../../api.js"; // ✅ Use centralized API
 
 ChartJS.register(
   LineElement,
@@ -28,17 +28,12 @@ export default function LineChart() {
   useEffect(() => {
     const fetchSignupData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:3001/api/v1/admin/week", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await api.get("/api/v1/admin/week");
 
         const labels = Array.from({ length: 7 }, (_, i) => {
           const d = new Date();
           d.setDate(d.getDate() - d.getDay() + i);
-          return d.toLocaleDateString('en-IN', { weekday: 'short' });
+          return d.toLocaleDateString("en-IN", { weekday: "short" });
         });
 
         const signupMap = res.data.reduce((acc, d) => {
@@ -76,10 +71,6 @@ export default function LineChart() {
               pointBackgroundColor: "#fff",
               pointBorderColor: "#3C89C9",
               pointHoverRadius: 7,
-              shadowOffsetX: 0,
-              shadowOffsetY: 4,
-              shadowBlur: 10,
-              shadowColor: "rgba(60,137,201,0.3)",
             },
           ],
         });
@@ -94,9 +85,7 @@ export default function LineChart() {
   const options = {
     responsive: true,
     plugins: {
-      legend: {
-        display: false,
-      },
+      legend: { display: false },
       tooltip: {
         enabled: true,
         backgroundColor: "#3C89C9",
@@ -106,18 +95,14 @@ export default function LineChart() {
     },
     scales: {
       x: {
-        grid: {
-          display: false,
-        },
+        grid: { display: false },
         ticks: {
           color: "#235782",
           font: { size: 14, weight: "bold" },
         },
       },
       y: {
-        grid: {
-          color: "rgba(60,137,201,0.08)",
-        },
+        grid: { color: "rgba(60,137,201,0.08)" },
         ticks: {
           color: "#235782",
           font: { size: 14, weight: "bold" },

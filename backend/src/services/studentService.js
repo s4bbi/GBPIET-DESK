@@ -9,14 +9,25 @@ const sendEmail = require("../utils/mailhandler");
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const signup = async (data) => {
-  if (!passwordPattern.test(data.password)) {
-    throw new BadRequestError("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character");
+
+  if (!/^\d{7}$/.test(String(data.instituteId))) {
+    throw new BadRequestError("Institute ID must be a 6-digit number");
   }
-  const existingUser = await studentRepository.findByEmail(data.email);
-  if (existingUser) throw new BadRequestError("Email already in use, kindly Login.");
+
+
+  if (!passwordPattern.test(data.password)) {
+    throw new BadRequestError(
+      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    );
+  }
+
+  const emailExists = await studentRepository.findByEmail(data.email);
+  if (emailExists) throw new BadRequestError("Email already in use, kindly Login.");
+
+  const idExists = await studentRepository.findByInstituteId(data.instituteId);
+  if (idExists) throw new BadRequestError("Institute ID already in use.");
 
   const newStudent = await studentRepository.create(data);
-  console.log(newStudent);
   return {
     message: "Student registered successfully.",
     data: {
@@ -29,6 +40,7 @@ const signup = async (data) => {
     },
   };
 };
+
 
 const login = async ({ email, password }) => {
   const student = await studentRepository.findByEmail(email);
@@ -72,7 +84,7 @@ async function getStudentProfile(id) {
 
 async function requestPasswordReset(email) {
   const { resetToken, student } = await studentRepository.generatePasswordResetToken(email);
-  const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+  const resetURL = `https://gbpiet-desk.vercel.app/reset-password/${resetToken}`;
   await sendEmail({ to: student.email, name: student.name, resetURL });
 
   return { success: true, message: "Password reset link sent to your email", resetToken };

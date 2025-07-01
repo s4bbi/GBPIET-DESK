@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "../../api"; // ✅ Centralized Axios instance
 
 export default function JobCard() {
   const [jobs, setJobs] = useState([]);
@@ -9,13 +9,7 @@ export default function JobCard() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:3001/api/v1/hiring/latest", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+        const res = await api.get("/api/v1/hiring/latest");
         const jobList = res.data?.data;
         if (Array.isArray(jobList) && jobList.length > 0) {
           console.log("✅ All job posts:", jobList);
@@ -52,7 +46,7 @@ export default function JobCard() {
         return (
           <div
             key={job._id || index}
-            className="flex flex-col sm:flex-row sm:items-center sm:justify-between border rounded-lg p-4 sm:p-6 bg-white shadow-sm gap-3 "
+            className="flex flex-col sm:flex-row sm:items-center sm:justify-between border rounded-lg p-4 sm:p-6 bg-white shadow-sm gap-3"
           >
             <div className="mb-1 sm:mb-0">
               <div className="font-sB text-base sm:text-lg">{companyName}</div>

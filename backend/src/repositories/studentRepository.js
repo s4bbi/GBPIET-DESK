@@ -20,9 +20,10 @@ class StudentRepository extends CrudRepository {
     return Student.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true });
   }
 
-  async findById(id) {
-    return Student.findById(id);
+  async findByInstituteId(id) {
+    return await Student.findOne({ instituteId: Number(id) });
   }
+
 
   async generatePasswordResetToken(email) {
     const student = await Student.findOne({ email });
@@ -56,6 +57,7 @@ class StudentRepository extends CrudRepository {
   async findWithFilters(query, sort = {}, limit = 10){
   return Student.find(query).sort(sort).limit(limit);
 }
+
 async getBranchStats() {
     return await Student.aggregate([
       {

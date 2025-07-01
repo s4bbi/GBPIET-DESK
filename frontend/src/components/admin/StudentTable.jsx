@@ -1,6 +1,5 @@
 import React, { useMemo, useState, Fragment, useEffect } from "react";
 import { useTable, useSortBy, useGlobalFilter } from "react-table";
-import axios from "axios";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
@@ -8,8 +7,9 @@ import autoTable from "jspdf-autotable";
 import { Menu, Transition } from "@headlessui/react";
 import { HiChevronDown, HiChevronUp, HiDownload } from "react-icons/hi";
 import Pagination from "../../components/common/Pagination";
+import api from "../../api.js";
 
-const baseURL = import.meta.env.VITE_API_BASE || "http://localhost:3001";
+const baseURL = import.meta.env.VITE_API_BASE || "http://localhost:3001"; // for resume file path
 
 export default function StudentsTable() {
   const [data, setData] = useState([]);
@@ -20,11 +20,7 @@ export default function StudentsTable() {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await axios.get(`${baseURL}/api/v1/admin/students`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await api.get("/api/v1/admin/students");
         setData(response.data.data || []);
       } catch (error) {
         console.error("Error fetching students:", error);
@@ -183,7 +179,6 @@ export default function StudentsTable() {
 
   return (
     <div className="p-4 sm:p-6">
-      {/* Header with Search and Export */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8 mt-2 justify-between flex-wrap">
         <input
           className="px-4 py-2 rounded-full w-full sm:w-72 shadow-sm focus:outline-none focus:ring-1 focus:ring-[#235782] text-sm sm:text-base border border-gray-300"
@@ -192,7 +187,6 @@ export default function StudentsTable() {
           onChange={(e) => setGlobalFilter(e.target.value)}
         />
 
-        {/* Sort & Export Dropdowns */}
         <div className="flex gap-3 flex-wrap items-center justify-start sm:justify-end w-full sm:w-auto">
           {/* Sort Dropdown */}
           <Menu as="div" className="relative inline-block text-left">
@@ -232,13 +226,9 @@ export default function StudentsTable() {
                               }`}
                               onClick={() => {
                                 if (!direction) {
-                                  setSortBy([
-                                    { id: col.accessor, desc: false },
-                                  ]);
+                                  setSortBy([{ id: col.accessor, desc: false }]);
                                 } else if (direction === "asc") {
-                                  setSortBy([
-                                    { id: col.accessor, desc: true },
-                                  ]);
+                                  setSortBy([{ id: col.accessor, desc: true }]);
                                 } else {
                                   setSortBy([]);
                                 }

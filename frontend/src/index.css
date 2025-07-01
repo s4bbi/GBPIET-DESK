@@ -45,3 +45,10 @@
 @theme{
   --font-sL: Satoshi-Light, "sans-serif"
 }
+
+select {
+  appearance: none;
+  -webkit-appearance: none; /* For Safari */
+  -moz-appearance: none; /* For Firefox */
+  background-image: none;
+}
