@@ -1,7 +1,7 @@
-// ✅ Signup.jsx using separate Loader component
+// ✅ Updated Signup.jsx with auto-login and dashboard redirect
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Added useNavigate
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { HiChevronDown } from "react-icons/hi";
 import { toast, ToastContainer } from "react-toastify";
@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import collegelogo from "../../assets/images/collegelogowhiteV.svg";
 import ill1 from "../../assets/images/su_ill_1.svg";
 import { departments, batches } from "../../utils/data.js";
-import Loader from "../../components/common/Loader"; // Import Loader
+import Loader from "../../components/common/Loader";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +25,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate(); // Added navigate hook
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -71,22 +72,32 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      const resPromise = axios.post(
+      // First, sign up the user
+      const signupPromise = axios.post(
         "http://localhost:3001/api/v1/students/signup",
         formData
       );
 
-      const [res] = await Promise.all([resPromise, minimumLoadTime]);
+      const [signupRes] = await Promise.all([signupPromise, minimumLoadTime]);
 
-      toast.success("Signup successful! Please login.");
-      setFormData({
-        name: "",
-        instituteId: "",
-        email: "",
-        password: "",
-        department: "",
-        batch: "",
-      });
+      // After successful signup, automatically log the user in
+      const loginRes = await axios.post(
+        "http://localhost:3001/api/v1/students/login",
+        {
+          email: formData.email,
+          password: formData.password
+        }
+      );
+
+      const loginData = loginRes.data;
+      
+      // Store token and user data
+      localStorage.setItem("token", loginData.token);
+      localStorage.setItem("user", JSON.stringify(loginData.data));
+      
+      toast.success("Signup and login successful!");
+      navigate("/dashboard"); // Redirect to dashboard
+      
     } catch (err) {
       console.error("Signup error:", err);
       const errorMessage =
@@ -98,6 +109,7 @@ const Signup = () => {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row relative">
