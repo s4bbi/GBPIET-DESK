@@ -101,7 +101,7 @@ const Login = () => {
       </div>
 
       {/* Right Section */}
-      <div className="w-full md:w-1/2 flex justify-center items-center bg-[#235782] p-4">
+      <div className="w-full h-screen md:w-1/2 flex justify-center items-center bg-[#235782] p-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-10 z-10">
           <h2 className="text-2xl mb-8 text-left font-rR">
             {forgotPasswordMode ? "Reset Password" : "Welcome Back!"}
