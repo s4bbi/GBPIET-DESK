@@ -9,11 +9,9 @@ const sendEmail = require("../utils/mailhandler");
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const signup = async (data) => {
-
   if (!/^\d{7}$/.test(String(data.instituteId))) {
     throw new BadRequestError("Institute ID must be a 6-digit number");
   }
-
 
   if (!passwordPattern.test(data.password)) {
     throw new BadRequestError(
@@ -40,7 +38,6 @@ const signup = async (data) => {
     },
   };
 };
-
 
 const login = async ({ email, password }) => {
   const student = await studentRepository.findByEmail(email);
@@ -69,7 +66,11 @@ const login = async ({ email, password }) => {
   };
 };
 
-async function updateStudentProfile(id, data) {
+async function updateStudentProfile(id, data, file) {
+  if (file && file.path) {
+    data.resume = file.path;
+  }
+
   const updatedStudent = await studentRepository.updateStudentProfile(id, data);
   if (!updatedStudent) {
     throw new BadRequestError("Student not found", { id });
@@ -98,10 +99,10 @@ async function resetPassword(token, newPassword) {
   await studentRepository.updatePassword(student._id, newPassword);
   return true;
 }
+
 async function getAllStudentsWithFilters(filters) {
   const query = {};
 
-  // 🔍 Filters
   if (filters.name) {
     query.name = { $regex: filters.name, $options: "i" };
   }
@@ -126,16 +127,13 @@ async function getAllStudentsWithFilters(filters) {
     query.batch = filters.batch;
   }
 
-  // 📦 Sorting
   const sort = {};
   if (filters.sortBy === "cgpa") {
     sort.cgpa = filters.order === "asc" ? 1 : -1;
   }
 
-  // 🔢 Limit
-  const limit = filters.limit ? parseInt(filters.limit) : 0; // 0 means no limit
+  const limit = filters.limit ? parseInt(filters.limit) : 0;
 
-  // 🔄 Execute query
   const students = await studentRepository.findWithFilters(query, sort, limit);
   return students;
 }
@@ -147,5 +145,5 @@ module.exports = {
   getStudentProfile,
   requestPasswordReset,
   resetPassword,
-  getAllStudentsWithFilters
+  getAllStudentsWithFilters,
 };

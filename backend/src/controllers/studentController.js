@@ -55,21 +55,16 @@ const updateStudentProfile = async (req, res, next) => {
     const studentId = req.user.id;
     let updateData = { ...req.body };
 
-    // ✅ Safely parse these fields
     updateData.skills = parseIfStringifiedArray(updateData.skills);
     updateData.achievements = parseIfStringifiedArray(updateData.achievements);
 
-    // ✅ Handle resume upload
-    if (req.file) {
-      updateData.resume = `/uploads/resumes/${req.file.filename}`;
-    }
-
     const updatedStudent = await StudentService.updateStudentProfile(
       studentId,
-      updateData
+      updateData,
+      req.file // pass uploaded resume file
     );
 
-    res.status(StatusCodes.OK).json({
+    res.status(200).json({
       success: true,
       message: "Profile updated successfully",
       data: updatedStudent,
