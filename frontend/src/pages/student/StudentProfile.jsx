@@ -38,7 +38,7 @@ export default function ProfilePage() {
       setUser(res.data.data);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to fetch profile");
+      toast.error("Failed to fetch profile, please login again!");
     } finally {
       setIsLoading(false);
     }

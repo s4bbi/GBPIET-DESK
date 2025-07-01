@@ -41,6 +41,7 @@ const Login = () => {
           }),
           delay,
         ]);
+        console.log(res)
         toast.success("Password reset link sent to your email.");
         setForgotPasswordMode(false);
       } catch (err) {

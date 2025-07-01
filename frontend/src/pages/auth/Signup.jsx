@@ -68,6 +68,8 @@ const Signup = () => {
       const signupPromise = api.post("/api/v1/students/signup", formData);
       const [signupRes] = await Promise.all([signupPromise, delay]);
 
+      console.log(signupRes)
+
       // ✅ Auto-login after signup
       const loginRes = await api.post("/api/v1/students/login", {
         email: formData.email,
