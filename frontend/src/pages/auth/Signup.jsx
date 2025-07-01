@@ -4,7 +4,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { HiChevronDown } from "react-icons/hi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import "../../index.css"
 import collegelogo from "../../assets/images/collegelogowhiteV.svg";
 import ill1 from "../../assets/images/su_ill_1.svg";
 import { departments, batches } from "../../utils/data.js";
@@ -83,9 +83,9 @@ const Signup = () => {
     } catch (err) {
       console.error("Signup error:", err);
       const message =
-        err.response?.data?.message ||
-        err.response?.data?.error?.message ||
-        "Signup failed";
+      err.response?.data?.message ||
+      err.response?.data?.error?.message ||
+      "Signup failed";
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -140,9 +140,16 @@ const Signup = () => {
                 name="instituteId"
                 type="text"
                 value={formData.instituteId}
-                onChange={handleChange}
+                maxLength="7"
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (/^\d{0,7}$/.test(val)) {
+                    setFormData((prev) => ({ ...prev, instituteId: val }));
+                  }
+                }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
+
             </div>
 
             <div>
@@ -192,7 +199,7 @@ const Signup = () => {
                   name="department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md"
+                  className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md appearance-none"
                 >
                   <option value="">Select Department</option>
                   {departments.map((dept, idx) => (
@@ -201,7 +208,7 @@ const Signup = () => {
                     </option>
                   ))}
                 </select>
-                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
               </div>
             </div>
 
@@ -212,7 +219,7 @@ const Signup = () => {
                   name="batch"
                   value={formData.batch}
                   onChange={handleChange}
-                  className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md"
+                  className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md appearance-none"
                 >
                   <option value="">Select Batch</option>
                   {batches.map((batch, idx) => (
@@ -221,7 +228,7 @@ const Signup = () => {
                     </option>
                   ))}
                 </select>
-                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                <HiChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none" />
               </div>
             </div>
 
