@@ -20,18 +20,17 @@ const StudentSchema = new mongoose.Schema(
       },
     },
 
-
     email: {
       type: String,
       required: [true, "Email is required"],
       unique: true,
       match: [/.+\@.+\..+/, "Enter a valid email"],
     },
+
     password: {
       type: String,
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters"],
-      // **Remove the custom validate function here**
     },
 
     department: {
@@ -39,11 +38,12 @@ const StudentSchema = new mongoose.Schema(
       enum: ["CSE", "ECE", "ME", "CE", "CSE (AIML)", "EE", "BT","MCA"],
       required: true,
     },
+
     batch: {
-      // Changed from `year` to `batch` as string or number
       type: String,
       required: true,
     },
+
     cgpa: {
       type: Number,
       min: 0,
