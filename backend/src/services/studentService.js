@@ -72,7 +72,7 @@ async function getStudentProfile(id) {
 
 async function requestPasswordReset(email) {
   const { resetToken, student } = await studentRepository.generatePasswordResetToken(email);
-  const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+  const resetURL = `https://gbpiet-desk.vercel.app/reset-password/${resetToken}`;
   await sendEmail({ to: student.email, name: student.name, resetURL });
 
   return { success: true, message: "Password reset link sent to your email", resetToken };
