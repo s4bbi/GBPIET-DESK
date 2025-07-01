@@ -29,6 +29,7 @@ const getStudentProfile = async (req, res, next) => {
         .status(404)
         .json({ success: false, message: "Student not found" });
     }
+    console.log(student);
     res.status(StatusCodes.OK).json({
       success: true,
       data: student,

@@ -14,14 +14,37 @@ const validateStudentId = (req, res, next) => {
 
 // Routes
 router.post("/signup", StudentController.createUser);
-router.post("/login", UserMiddleware.validateUser(["email", "password"]), StudentController.loginStudent);
+router.post(
+  "/login",
+  UserMiddleware.validateUser(["email", "password"]),
+  StudentController.loginStudent
+);
 
 // New GET profile route (added)
-router.get("/profile/:id", AuthMiddleware.isLoggedIn, validateStudentId, StudentController.getStudentProfile);
+router.get(
+  "/profile/:id",
+  AuthMiddleware.isLoggedIn,
+  validateStudentId,
+  StudentController.getStudentProfile
+);
 
-router.put("/profile/:id", AuthMiddleware.isLoggedIn, validateStudentId, upload.single("resume"), StudentController.updateStudentProfile);
+router.put(
+  "/profile/:id",
+  AuthMiddleware.isLoggedIn,
+  validateStudentId,
+  upload.single("resume"),
+  StudentController.updateStudentProfile
+);
 
-router.post("/forgot-password", UserMiddleware.validateUser(["email"]), StudentController.forgorPassword);
-router.post("/reset-password/:token", UserMiddleware.validateUser(["newPassword"]), StudentController.resetPassword);
+router.post(
+  "/forgot-password",
+  UserMiddleware.validateUser(["email"]),
+  StudentController.forgorPassword
+);
+router.post(
+  "/reset-password/:token",
+  UserMiddleware.validateUser(["newPassword"]),
+  StudentController.resetPassword
+);
 
 module.exports = router;
