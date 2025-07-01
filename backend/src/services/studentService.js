@@ -3,10 +3,14 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const StudentRepository = require("../repositories/studentRepository");
 const studentRepository = new StudentRepository();
-const { BadRequestError, UnauthorizedError } = require("../errors/customErrors");
+const {
+  BadRequestError,
+  UnauthorizedError,
+} = require("../errors/customErrors");
 const sendEmail = require("../utils/mailhandler");
 
-const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const passwordPattern =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const signup = async (data) => {
   if (!/^\d{7}$/.test(String(data.instituteId))) {
@@ -20,7 +24,8 @@ const signup = async (data) => {
   }
 
   const emailExists = await studentRepository.findByEmail(data.email);
-  if (emailExists) throw new BadRequestError("Email already in use, kindly Login.");
+  if (emailExists)
+    throw new BadRequestError("Email already in use, kindly Login.");
 
   const idExists = await studentRepository.findByInstituteId(data.instituteId);
   if (idExists) throw new BadRequestError("Institute ID already in use.");
@@ -66,11 +71,7 @@ const login = async ({ email, password }) => {
   };
 };
 
-async function updateStudentProfile(id, data, file) {
-  if (file && file.path) {
-    data.resume = file.path;
-  }
-
+async function updateStudentProfile(id, data) {
   const updatedStudent = await studentRepository.updateStudentProfile(id, data);
   if (!updatedStudent) {
     throw new BadRequestError("Student not found", { id });
@@ -78,17 +79,17 @@ async function updateStudentProfile(id, data, file) {
   return updatedStudent;
 }
 
-async function getStudentProfile(id) {
-  const student = await studentRepository.findById(id);
-  return student;
-}
-
 async function requestPasswordReset(email) {
-  const { resetToken, student } = await studentRepository.generatePasswordResetToken(email);
+  const { resetToken, student } =
+    await studentRepository.generatePasswordResetToken(email);
   const resetURL = `https://gbpiet-desk.vercel.app/reset-password/${resetToken}`;
   await sendEmail({ to: student.email, name: student.name, resetURL });
 
-  return { success: true, message: "Password reset link sent to your email", resetToken };
+  return {
+    success: true,
+    message: "Password reset link sent to your email",
+    resetToken,
+  };
 }
 
 async function resetPassword(token, newPassword) {
@@ -99,7 +100,18 @@ async function resetPassword(token, newPassword) {
   await studentRepository.updatePassword(student._id, newPassword);
   return true;
 }
-
+async function getStudentProfile(id) {
+  try {
+    const student = await studentRepository.get(id);
+    if (!student) {
+      throw new Error(`Student with ID ${id} not found`);
+    }
+    return student;
+  } catch (error) {
+    console.error("Error in getStudentProfile:", error);
+    throw error; // let controller handle it
+  }
+}
 async function getAllStudentsWithFilters(filters) {
   const query = {};
 
@@ -119,7 +131,9 @@ async function getAllStudentsWithFilters(filters) {
   }
 
   if (filters.achievements) {
-    const achievementArray = filters.achievements.split(",").map((a) => a.trim());
+    const achievementArray = filters.achievements
+      .split(",")
+      .map((a) => a.trim());
     query.achievements = { $in: achievementArray };
   }
 
