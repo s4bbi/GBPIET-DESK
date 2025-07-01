@@ -152,7 +152,7 @@ export default function ProfilePage() {
                 </div>
               ) : user.resume ? (
                 <a
-                  href={`http://localhost:3001${user.resume}`}
+                  href={`${api.defaults.baseURL}${user.resume}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 underline text-sm"
