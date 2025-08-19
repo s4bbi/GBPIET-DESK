@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const StudentRepository = require("../repositories/studentRepository");
+const { uploadResumeToCloudinary } = require("../utils/cloudinaryUploader");
+
 const studentRepository = new StudentRepository();
 const {
   BadRequestError,
@@ -71,15 +73,7 @@ const login = async ({ email, password }) => {
   };
 };
 
-async function updateStudentProfile(id, data, file) {
-  console.log("Update service called with ID:", id);
-  console.log("Update data:", data);
-
-  if (file) {
-    console.log("Resume file URL (Cloudinary):", file.path);
-    data.resume = file.path;
-  }
-
+async function updateStudentProfile(id, data) {
   const updatedStudent = await studentRepository.updateStudentProfile(id, data);
   if (!updatedStudent) {
     throw new BadRequestError("Student not found", { id });
@@ -87,8 +81,10 @@ async function updateStudentProfile(id, data, file) {
   return updatedStudent;
 }
 
-
-
+async function getStudentProfile(id) {
+  const student = await studentRepository.findById(id);
+  return student;
+}
 
 async function requestPasswordReset(email) {
   const { resetToken, student } =

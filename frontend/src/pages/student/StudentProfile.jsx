@@ -4,7 +4,7 @@ import { HiOutlineAcademicCap, HiPencilAlt } from "react-icons/hi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../../components/common/Loader";
-import api from "../../api"; // ✅ Import centralized Axios
+import api from "../../api"; // ✅ Axios instance with baseURL
 
 export default function ProfilePage() {
   const [user, setUser] = useState({
@@ -56,7 +56,8 @@ export default function ProfilePage() {
   const handleSave = async () => {
     try {
       const formData = new FormData();
-      formData.append("cgpa", user.cgpa);
+
+      formData.append("cgpa", user.cgpa || "");
 
       const achievementsArray =
         typeof user.achievements === "string"
@@ -81,10 +82,24 @@ export default function ProfilePage() {
         formData.append("resume", file);
       }
 
+      // Debug log for what's being sent
+      console.log("Uploading form data:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      const token = localStorage.getItem("token");
+
       const res = await api.put(
-        `/api/v1/students/profile/${user._id}`,
+        `/api/v1/students/profile/${storedUser._id}`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       setUser(res.data.data);
@@ -92,8 +107,8 @@ export default function ProfilePage() {
       setFile(null);
       toast.success("Profile updated successfully!");
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to update profile");
+      console.error("Profile update failed:", err?.response?.data || err.message);
+      toast.error("Failed to update profile. Please try again.");
     }
   };
 
@@ -107,12 +122,12 @@ export default function ProfilePage() {
 
   return (
     <StudentLayout>
-      <div className="w-full md:w-5xl mx-auto p-4 sm:p-10 -mt-12">
+      <div className="w-screen md:w-5xl mx-auto p-4 sm:p-10 -mt-12">
         <h2 className="text-3xl font-bold text-gray-800 text-center mb-10 font-sB tracking-tight">
           My Profile
         </h2>
 
-        <div className="bg-white rounded-3xl shadow-xl px-8 py-10 space-y-8">
+        <div className="w-full bg-white rounded-3xl shadow-xl px-8 py-10 space-y-8">
           <div className="flex items-center gap-4 md:gap-6">
             <div className="w-20 h-20 rounded-full bg-[#235782] flex items-center justify-center">
               <HiOutlineAcademicCap className="text-white text-3xl" />

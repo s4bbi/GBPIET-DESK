@@ -77,36 +77,33 @@ const parseIfStringifiedArray = (input) => {
 // };
 const updateStudentProfile = async (req, res, next) => {
   try {
-    console.log("File received:", req.file);
-    console.log("Body received:", req.body);
+    const studentId = req.user.id;
+    let updateData = { ...req.body };
 
-    const updates = { ...req.body };
-    console.log("Student ID:", req.params.id);
+    // ✅ Safely parse these fields
+    updateData.skills = parseIfStringifiedArray(updateData.skills);
+    updateData.achievements = parseIfStringifiedArray(updateData.achievements);
 
-
-    // Save Cloudinary resume URL if uploaded
+    // ✅ Handle resume upload
     if (req.file) {
-      updates.resume = req.file.path; // Cloudinary returns hosted URL in path
+      updateData.resume = `/uploads/resumes/${req.file.filename}`;
     }
 
-    const student = await StudentService.updateStudentProfile(
-      req.params.id,
-      updates,
-      req.file // ✅ pass file, not { new: true }
+    const updatedStudent = await StudentService.updateStudentProfile(
+      studentId,
+      updateData
     );
 
-    if (!student) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Student not found" });
-    }
-
-    res.json({ success: true, data: student });
-  } catch (err) {
-    console.error("❌ Error in updateStudentProfile:", err);
-    next(err);
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: updatedStudent,
+    });
+  } catch (error) {
+    next(error);
   }
 };
+
 
 const forgorPassword = async (req, res, next) => {
   try {

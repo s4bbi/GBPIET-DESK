@@ -19,13 +19,13 @@
 //   },
 // });
 
-// const fileFilter = (req, file, cb) => {
-//   if (file.mimetype === "application/pdf") {
-//     cb(null, true);
-//   } else {
-//     cb(new Error("Only PDF files are allowed"), false);
-//   }
-// };
+// // const fileFilter = (req, file, cb) => {
+// //   if (file.mimetype === "application/pdf") {
+// //     cb(null, true);
+// //   } else {
+// //     cb(new Error("Only PDF files are allowed"), false);
+// //   }
+// // };
 
-// const uploads = multer({ storage, fileFilter });
-// module.exports = uploads;
+// const upload = multer({ storage, fileFilter });
+// module.exports = upload;
