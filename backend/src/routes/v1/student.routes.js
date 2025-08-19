@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { StudentController } = require("../../controllers");
 const { UserMiddleware, AuthMiddleware } = require("../../middlewares");
-const upload = require("../../utils/multer");
+// const upload = require("../../utils/multer");
+const upload = require("../../middlewares/cloudinaryUploader");
 
 const validateStudentId = (req, res, next) => {
   if (!req.params.id || req.params.id.length < 12) {
@@ -19,9 +20,20 @@ router.post(
 );
 
 // New GET profile route (added)
-router.get("/profile/:id", AuthMiddleware.isLoggedIn, validateStudentId, StudentController.getStudentProfile);
+router.get(
+  "/profile/:id",
+  AuthMiddleware.isLoggedIn,
+  validateStudentId,
+  StudentController.getStudentProfile
+);
 
-router.put("/profile/:id", AuthMiddleware.isLoggedIn, validateStudentId, upload.single("resume"), StudentController.updateStudentProfile);
+router.put(
+  "/profile/:id",
+  AuthMiddleware.isLoggedIn,
+  validateStudentId,
+  upload.single("resume"), // Cloudinary upload
+  StudentController.updateStudentProfile
+);
 
 router.post(
   "/forgot-password",

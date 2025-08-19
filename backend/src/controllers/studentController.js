@@ -77,33 +77,31 @@ const parseIfStringifiedArray = (input) => {
 // };
 const updateStudentProfile = async (req, res, next) => {
   try {
-    const studentId = req.user.id;
-    let updateData = { ...req.body };
+    console.log("File received:", req.file);
+    console.log("Body received:", req.body);
 
-    // ✅ Safely parse these fields
-    updateData.skills = parseIfStringifiedArray(updateData.skills);
-    updateData.achievements = parseIfStringifiedArray(updateData.achievements);
+    const updates = { ...req.body };
 
-    // ✅ Handle resume upload
-    if (req.file) {
-      updateData.resume = `/uploads/resumes/${req.file.filename}`;
-    }
-
-    const updatedStudent = await StudentService.updateStudentProfile(
-      studentId,
-      updateData
+    const student = await StudentService.updateStudentProfile(
+      req.params.id,
+      updates,
+      req.file
     );
 
-    res.status(StatusCodes.OK).json({
-      success: true,
-      message: "Profile updated successfully",
-      data: updatedStudent,
-    });
-  } catch (error) {
-    next(error);
+    if (!student) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Student not found" });
+    }
+
+    res.json({ success: true, data: student });
+  } catch (err) {
+    console.error("❌ Error in updateStudentProfile:", err);
+    next(err);
   }
 };
 
+module.exports = { updateStudentProfile };
 
 const forgorPassword = async (req, res, next) => {
   try {
