@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import StudentLayout from "../../components/layouts/StudentLayout";
 import { HiOutlineAcademicCap, HiPencilAlt } from "react-icons/hi";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Loader from "../../components/common/Loader";
 import api from "../../api"; // ✅ Import centralized Axios
 
@@ -58,13 +58,21 @@ export default function ProfilePage() {
       const formData = new FormData();
       formData.append("cgpa", user.cgpa);
 
-      const achievementsArray = typeof user.achievements === "string"
-        ? user.achievements.split(",").map(s => s.trim()).filter(Boolean)
-        : user.achievements;
+      const achievementsArray =
+        typeof user.achievements === "string"
+          ? user.achievements
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : user.achievements;
 
-      const skillsArray = typeof user.skills === "string"
-        ? user.skills.split(",").map(s => s.trim()).filter(Boolean)
-        : user.skills;
+      const skillsArray =
+        typeof user.skills === "string"
+          ? user.skills
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : user.skills;
 
       formData.append("achievements", JSON.stringify(achievementsArray));
       formData.append("skills", JSON.stringify(skillsArray));
@@ -90,7 +98,11 @@ export default function ProfilePage() {
   };
 
   if (isLoading) {
-    return <div className="flex justify-center mt-20"><Loader /></div>;
+    return (
+      <div className="flex justify-center mt-20">
+        <Loader />
+      </div>
+    );
   }
 
   return (
@@ -106,7 +118,9 @@ export default function ProfilePage() {
               <HiOutlineAcademicCap className="text-white text-3xl" />
             </div>
             <div>
-              <h3 className="text-xl font-sB text-gray-900">{user.name || "Student Name"}</h3>
+              <h3 className="text-xl font-sB text-gray-900">
+                {user.name || "Student Name"}
+              </h3>
               <p className="text-gray-500 text-sM font-sM">{user.email}</p>
             </div>
           </div>
@@ -138,7 +152,9 @@ export default function ProfilePage() {
             />
 
             <div className="col-span-full font-sM">
-              <span className="text-gray-500 font-medium mb-1 block">Resume</span>
+              <span className="text-gray-500 font-medium mb-1 block">
+                Resume
+              </span>
               {editMode ? (
                 <div className="space-y-2">
                   <input
@@ -148,11 +164,15 @@ export default function ProfilePage() {
                     onChange={handleFileChange}
                     className="block text-sm text-gray-500 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#235782] file:text-white hover:file:bg-[#1e4b6d]"
                   />
-                  {file && <span className="text-green-600 text-sm">Selected: {file.name}</span>}
+                  {file && (
+                    <span className="text-green-600 text-sm">
+                      Selected: {file.name}
+                    </span>
+                  )}
                 </div>
               ) : user.resume ? (
                 <a
-                  href={`${api.defaults.baseURL}${user.resume}`}
+                  href={user.resume}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 underline text-sm font-sM"

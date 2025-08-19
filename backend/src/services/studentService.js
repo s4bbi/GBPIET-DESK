@@ -71,19 +71,23 @@ const login = async ({ email, password }) => {
   };
 };
 
-async function getStudentProfile(id) {
-  
-  const student = await studentRepository.get(id);
-  console.log(student);
-  return student;
-}
-async function updateStudentProfile(id, data) {
+async function updateStudentProfile(id, data, file) {
+  console.log("Update service called with ID:", id);
+  console.log("Update data:", data);
+
+  if (file) {
+    console.log("Resume file URL (Cloudinary):", file.path);
+    data.resume = file.path;
+  }
+
   const updatedStudent = await studentRepository.updateStudentProfile(id, data);
   if (!updatedStudent) {
     throw new BadRequestError("Student not found", { id });
   }
   return updatedStudent;
 }
+
+
 
 
 async function requestPasswordReset(email) {
@@ -107,10 +111,21 @@ async function resetPassword(token, newPassword) {
   await studentRepository.updatePassword(student._id, newPassword);
   return true;
 }
+async function getStudentProfile(id) {
+  try {
+    const student = await studentRepository.get(id);
+    if (!student) {
+      throw new Error(`Student with ID ${id} not found`);
+    }
+    return student;
+  } catch (error) {
+    console.error("Error in getStudentProfile:", error);
+    throw error; // let controller handle it
+  }
+}
 async function getAllStudentsWithFilters(filters) {
   const query = {};
 
-  // 🔍 Filters
   if (filters.name) {
     query.name = { $regex: filters.name, $options: "i" };
   }
@@ -137,16 +152,13 @@ async function getAllStudentsWithFilters(filters) {
     query.batch = filters.batch;
   }
 
-  // 📦 Sorting
   const sort = {};
   if (filters.sortBy === "cgpa") {
     sort.cgpa = filters.order === "asc" ? 1 : -1;
   }
 
-  // 🔢 Limit
-  const limit = filters.limit ? parseInt(filters.limit) : 0; // 0 means no limit
+  const limit = filters.limit ? parseInt(filters.limit) : 0;
 
-  // 🔄 Execute query
   const students = await studentRepository.findWithFilters(query, sort, limit);
   return students;
 }
