@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const StudentRepository = require("../repositories/studentRepository");
-const { uploadResumeToCloudinary } = require("../utils/cloudinaryUploader");
+// const { uploadResumeToCloudinary } = require("../utils/cloudinaryUploader");
 
 const studentRepository = new StudentRepository();
 const {
@@ -74,14 +74,32 @@ const login = async ({ email, password }) => {
 };
 
 async function updateStudentProfile(id, data, file) {
-  if (file && file.path) {
-    const cloudinaryURL = await uploadResumeToCloudinary(file.path, file.originalname);
-    data.resume = cloudinaryURL;
+  if (file) {
+    console.log("Cloudinary file object:", file);
+
+    // ✅ file.path is already the full public Cloudinary URL
+    let resumeUrl = file.path;
+
+    // ✅ only enforce extension if path exists and doesn’t end with .pdf
+    if (resumeUrl && !resumeUrl.endsWith(".pdf")) {
+      resumeUrl += ".pdf";
+    }
+
+    data.resume = resumeUrl;
   }
 
-  const updated = await studentRepository.updateStudentProfile(id, data);
-  if (!updated) throw new BadRequestError("Student not found");
-  return updated;
+  const updatedStudent = await studentRepository.updateStudentProfile(id, data);
+
+  if (!updatedStudent) {
+    throw new BadRequestError("Student not found", { id });
+  }
+
+  return updatedStudent;
+}
+
+async function getStudentProfile(id) {
+  const student = await studentRepository.findById(id);
+  return student;
 }
 
 async function requestPasswordReset(email) {

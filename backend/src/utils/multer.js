@@ -1,25 +1,31 @@
-const multer = require("multer");
-const path = require("path");
+// const multer = require("multer");
+// const path = require("path");
+// const fs = require("fs");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, "../uploads/temp")); // make sure folder exists
-  },
-  filename: function (req, file, cb) {
-    const ext = path.extname(file.originalname);
-    const filename = `${Date.now()}-${file.originalname}`;
-    cb(null, filename);
-  },
-});
+// // Ensure directory exists or create it
+// const resumePath = path.join(__dirname, "../uploads/resumes");
+// if (!fs.existsSync(resumePath)) {
+//   fs.mkdirSync(resumePath, { recursive: true });
+// }
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === "application/pdf") {
-    cb(null, true);
-  } else {
-    cb(new Error("Only PDF files are allowed"), false);
-  }
-};
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, resumePath);
+//   },
+//   filename: function (req, file, cb) {
+//     const ext = path.extname(file.originalname);
+//     const filename = `${Date.now()}-${file.fieldname}${ext}`;
+//     cb(null, filename);
+//   },
+// });
 
-const upload = multer({ storage, fileFilter });
+// // const fileFilter = (req, file, cb) => {
+// //   if (file.mimetype === "application/pdf") {
+// //     cb(null, true);
+// //   } else {
+// //     cb(new Error("Only PDF files are allowed"), false);
+// //   }
+// // };
 
-module.exports = upload;
+// const upload = multer({ storage, fileFilter });
+// module.exports = upload;
