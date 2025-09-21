@@ -49,14 +49,9 @@ export default function ProfilePage() {
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
   const handleSave = async () => {
     try {
       const formData = new FormData();
-
       formData.append("cgpa", user.cgpa || "");
 
       const achievementsArray =
@@ -78,15 +73,10 @@ export default function ProfilePage() {
       formData.append("achievements", JSON.stringify(achievementsArray));
       formData.append("skills", JSON.stringify(skillsArray));
 
-      if (file) {
-        formData.append("resume", file);
-      }
-
-      // Debug log for what's being sent
-      console.log("Uploading form data:");
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
+      // ⛔ Resume temporarily disabled
+      // if (file) {
+      //   formData.append("resume", file);
+      // }
 
       const storedUser = JSON.parse(localStorage.getItem("user"));
       const token = localStorage.getItem("token");
@@ -166,6 +156,8 @@ export default function ProfilePage() {
               onChange={handleChange}
             />
 
+            {/* ⛔ Resume temporarily commented out */}
+            {/*
             <div className="col-span-full font-sM">
               <span className="text-gray-500 font-medium mb-1 block">
                 Resume
@@ -198,6 +190,7 @@ export default function ProfilePage() {
                 <span className="text-gray-800 text-sm">Not Uploaded</span>
               )}
             </div>
+            */}
           </div>
 
           <div className="pt-6 text-center">
